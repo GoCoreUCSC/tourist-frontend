@@ -73,7 +73,7 @@ class _SigninState extends State<Signin> {
                         height: 20,
                       ),
                       Text(
-                        "Sign In",
+                        "Sign In Tourist ",
                         style: GoogleFonts.radioCanada(
                             fontWeight: FontWeight.bold,
                             fontSize: 45,
