@@ -85,88 +85,94 @@ List<String> images = ["sigiriya.jpg", "hanthana.jpg","ella.jpg", "bathalegala.j
       ),
 
       
-      body: Stack(
-        children: [
-
-         Container(  
-          child: getChipSet()
-         ),
-
+      body: WillPopScope(
+        onWillPop: () async {
+             Navigator.pop(context,selectActivity );
+             return false;
+          },
+        child: Stack(
+          children: [
+      
+           Container(  
+            child: getChipSet()
+           ),
+      
+            Positioned(
+              top: 90,
+              left: 12,
+              right: 12,
+              bottom: 0,
+            child: GridView.builder(
+                    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 2,
+                      childAspectRatio: 1.5,
+                      crossAxisSpacing: 15,
+                      mainAxisSpacing: 15,
+                      //mainAxisExtent: 264,
+                      ), 
+                    itemCount: Cities.length,
+                    itemBuilder: (context, index) {
+                      final item = images[index];
+                      final item2 = Cities[index];
+      
+                      return getGridItem(item,item2);
+                    }
+                  ),
+            ),
+      
+         //-- Start Button_Button--//
           Positioned(
-            top: 90,
-            left: 12,
-            right: 12,
-            bottom: 0,
-          child: GridView.builder(
-                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 2,
-                    childAspectRatio: 1.5,
-                    crossAxisSpacing: 15,
-                    mainAxisSpacing: 15,
-                    //mainAxisExtent: 264,
-                    ), 
-                  itemCount: Cities.length,
-                  itemBuilder: (context, index) {
-                    final item = images[index];
-                    final item2 = Cities[index];
-
-                    return getGridItem(item,item2);
-                  }
-                ),
-          ),
-
-   //-- Start Button_Button--//
-        Positioned(
-          top: 670,
-          left: 60,
-          right: 60,
-          bottom: 25,
-          child: Container(
-              margin: const EdgeInsets.all(5),
-              
-              child: ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                      //fixedSize: const Size(200,45), 
-                      //padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 20),
-                      primary: Color(0xFF1554F6),
-                                          
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10),
-                        side: const BorderSide(
-                          width: 2,
-                          color: Color(0xFF1554F6),
+            top: 670,
+            left: 60,
+            right: 60,
+            bottom: 25,
+            child: Container(
+                margin: const EdgeInsets.all(5),
+                
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                        //fixedSize: const Size(200,45), 
+                        //padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 20),
+                        primary: Color(0xFF1554F6),
+                                            
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10),
+                          side: const BorderSide(
+                            width: 2,
+                            color: Color(0xFF1554F6),
+                          ),
                         ),
-                      ),
-                      ),
-                onPressed: () {
-                  if (selectItems.isNotEmpty) {
-                    Navigator.pushReplacement(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => Selectmoredetails(selectActivity,selectItems,name,token)));
-                  }
-                  else{
-                    Fluttertoast.showToast(
-                                  msg: 'Select a Destination',
-                                  toastLength: Toast.LENGTH_SHORT,
-                                  gravity: ToastGravity.TOP,
-                                  timeInSecForIosWeb: 1,
-                                  backgroundColor: Colors.red,
-                                  textColor:Colors.white,
-                                  fontSize:16.0);
-                  }
-                  },
-                  child: const Text('Continue',
-                  overflow: TextOverflow.visible,
-                  style: TextStyle(
-                        fontSize: 20,
-                        color: Colors.white,
-                        fontWeight: FontWeight.w400,
-                      )),
-              ),
-            ),)
-            //-- End Button_Button--//
-        ],
+                        ),
+                  onPressed: () {
+                    if (selectItems.isNotEmpty) {
+                      Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => Selectmoredetails(selectActivity,selectItems,name,token)));
+                    }
+                    else{
+                      Fluttertoast.showToast(
+                                    msg: 'Select a Destination',
+                                    toastLength: Toast.LENGTH_SHORT,
+                                    gravity: ToastGravity.TOP,
+                                    timeInSecForIosWeb: 1,
+                                    backgroundColor: Colors.red,
+                                    textColor:Colors.white,
+                                    fontSize:16.0);
+                    }
+                    },
+                    child: const Text('Continue',
+                    overflow: TextOverflow.visible,
+                    style: TextStyle(
+                          fontSize: 20,
+                          color: Colors.white,
+                          fontWeight: FontWeight.w400,
+                        )),
+                ),
+              ),)
+              //-- End Button_Button--//
+          ],
+        ),
       )
         );   
 }

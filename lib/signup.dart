@@ -4,9 +4,11 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:frontend/services/authservice.dart';
 import 'package:frontend/signin.dart';
 import 'package:frontend/user.dart';
+import 'package:frontend/welcome_screen.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/src/rendering/flex.dart';
+import 'package:progress_indicator_button/progress_button.dart';
 //import 'activities.dart';
 // import 'package:frontend/signup.dart';
 // import 'package:frontend/dashboard.dart';
@@ -37,21 +39,77 @@ class _SignupState extends State<Signup> {
 //   }
 
   // User user = User('', '');
-  var name, email, password, token, confirmPass,c_password;
+  var name, email, password, token, c_password;
   bool agree = false;
+  RegExp pass_valid = RegExp(r"(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*\W)");
+  double password_strength = 0;
+  bool _isVisible = false;
+  // 0: No password
+  // 1/5: Weak
+  // 2/5: Medium
+  // 3/5: Strong
+  // 4/5: Strong
+  //   1:   Great
+
+  //A function that validate user entered password
+  bool validatePassword(String pass){
+    String _password = pass.trim();
+
+    if(_password.isEmpty){
+      setState(() {
+        password_strength = 0;
+        _isVisible= true;
+      });
+    }else if(_password.length < 2 ){
+      setState(() {
+        password_strength = 1 / 5;
+        _isVisible= true;
+      });
+      }else if(_password.length < 4){
+      setState(() {
+        password_strength = 2 / 5;
+        _isVisible= true;
+      });
+    }else if(_password.length < 5){
+      setState(() {
+        password_strength = 3 / 5;
+        _isVisible= true;
+      });
+    }else if(_password.length < 6){
+      setState(() {
+        password_strength = 4 / 5;
+        _isVisible= true;
+      });  
+    }else{
+      if(pass_valid.hasMatch(_password)){
+        setState(() {
+          password_strength = 5 / 5;
+          _isVisible= false;
+        });
+        return true;
+      }else{
+        setState(() {
+          password_strength = 4 / 5;
+          _isVisible= true;
+        });
+        return false;
+      }
+    }
+    return false;
+  }
   
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      resizeToAvoidBottomInset: false,
+      resizeToAvoidBottomInset: true,
       body: Stack(
         children: [
-          Positioned(
-            bottom: 25,
-            child: SvgPicture.asset('images/top.svg',width:350, height:150 ,)),
-            Positioned(
-            bottom: 0,
-            child: SvgPicture.asset('images/top1.svg',width:350, height:100 ,)),
+          // Positioned(
+          //   bottom: 25,
+          //   child: SvgPicture.asset('images/top.svg',width:350, height:150 ,)),
+          //   Positioned(
+          //   bottom: 0,
+          //   child: SvgPicture.asset('images/top1.svg',width:350, height:100 ,)),
             Container(
               // alignment: Alignment.center,
                 child: Form(
@@ -81,21 +139,34 @@ class _SignupState extends State<Signup> {
                       ),
                       Padding( 
                         padding: const EdgeInsets.fromLTRB(20, 10, 20, 10),
-                        child: TextFormField(
+                        child: Column(
+                          crossAxisAlignment:  CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                          "Full Name",
+                          style: TextStyle(
+                            fontSize: 16,
+                              color: Colors.black, fontWeight: FontWeight.bold),
+                        ),
+                          
+                         TextFormField(
                           controller: TextEditingController(text: name),
                           obscureText: false,
                           onChanged: (value){
                             name= value;
                           },
-                          validator: (String? value) {
+                          validator: (value) {
                             if (value!.isEmpty) {
-                              return 'Enter Name';
+                              return 'Enter your Name';
                             } else {
                               return null;
                             }
                           },
                           decoration: InputDecoration(
-                            hintText: 'Name',
+                            errorStyle: TextStyle(
+                              fontSize: 14.0,
+                            ),
+                            hintText: 'Enter your name',
                             enabledBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(8),
                               borderSide: BorderSide(color: Color(0xff1554F6)),
@@ -116,27 +187,41 @@ class _SignupState extends State<Signup> {
                              ),
                              
               ),
-                      ),
-                      Padding(
+                    ])),
+                      Padding( 
                         padding: const EdgeInsets.fromLTRB(20, 10, 20, 10),
-                        child: TextFormField(
+                        child: Column(
+                          crossAxisAlignment:  CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                          "Email",
+                          style: TextStyle(
+                            fontSize: 16,
+                              color: Colors.black, fontWeight: FontWeight.bold),
+                        ),
+                          
+                         TextFormField(
                           controller: TextEditingController(text: email),
                           onChanged: (value){
                             email= value;
                           },
                           validator: (value) {
                             if (value!.isEmpty) {
-                              return 'Enter Email';
-                            } else if (RegExp(
+                              return 'Enter your Email';
+                            } 
+                            else if (RegExp(
                                     r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
-                                .hasMatch(value)) {
-                              return null;
-                            } else {
-                              return 'Enter valid Email';
-                            }
-                          }, 
+                                .hasMatch(value)) 
+                                  {return null;}
+                          else {
+                            return 'Enter a valid Email';
+                          }},
+                           
                           decoration: InputDecoration(
-                            hintText: 'Email',
+                            errorStyle: TextStyle(
+                              fontSize: 14.0,
+                            ),
+                            hintText: 'Example@gamil.com',
                             enabledBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(8),
                               borderSide: BorderSide(color: Color(0xff1554F6)),
@@ -157,28 +242,43 @@ class _SignupState extends State<Signup> {
                              ),
                              
               ),
-                      ),
-              Padding( 
+                     ]) ),
+             Padding( 
                         padding: const EdgeInsets.fromLTRB(20, 10, 20, 10),
-                        child: TextFormField(
+                        child: Column(
+                          crossAxisAlignment:  CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                          "Password",
+                          style: TextStyle(
+                            fontSize: 16,
+                              color: Colors.black, fontWeight: FontWeight.bold),
+                        ),
+                          
+                         TextFormField(
                           controller: TextEditingController(text: password),
                           obscureText: true,
                           onChanged: (value){
                             password= value;
                           },
                           validator: (String? value) {
-                            confirmPass = value;
                             if (value!.isEmpty) {
                               return 'Enter a password';
-                            } else if (!RegExp(
-                                    r"^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[!@#\$&*~]).{8,}$")
-                                .hasMatch(value)) {
-                              return 'Enter valid password';
-                            } else {
-                              return null;
-                            }
+                            } else {//call function to check password
+                                  bool result = validatePassword(value);
+                                  if(result){
+                                    // create account event
+                                    return null;
+                                  
+                                  }else{
+                                    return " Password should contain: \n - A capital letter \n - A simple letter \n - A number \n - A special character";
+                                  }
+                                }
                           },
                           decoration: InputDecoration(
+                            errorStyle: TextStyle(
+                              fontSize: 14.0,
+                            ),
                             hintText: 'Password',
                             enabledBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(8),
@@ -200,25 +300,59 @@ class _SignupState extends State<Signup> {
                              ),
                              
               ),
-                      ),
+                     ]) ),
+                      
+                      Padding(
+                            padding: const EdgeInsets.fromLTRB(30, 10, 30, 10),
+                            child: Visibility (
+                            visible: _isVisible,
+                            child: LinearProgressIndicator(
+                              value: password_strength,
+                              backgroundColor: Colors.grey[300],
+                              minHeight: 5,
+                              color: password_strength <= 1 / 5
+                                  ? Colors.red
+                                   password_strength <= 2 / 5
+                                  ? Colors.orange
+                                  : password_strength == 3 / 5
+                                  ? Colors.yellow
+                                  : password_strength == 4 / 5
+                                  ? Colors.blue
+                                  : Colors.green,
+                            ),
+              ),),
               Padding( 
                         padding: const EdgeInsets.fromLTRB(20, 10, 20, 10),
-                        child: TextFormField(
+                        child: Column(
+                          crossAxisAlignment:  CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                          "Confirm Password",
+                          style: TextStyle(
+                            fontSize: 16,
+                              color: Colors.black, fontWeight: FontWeight.bold),
+                        ),
+                          
+                         TextFormField(
                           controller: TextEditingController(text: c_password),
                           obscureText: true,
                           onChanged: (value){
                             c_password= value;
                           },
                           validator: (String? value) {
+
                             if (value!.isEmpty) {
-                              return 'Confirm Password';
-                            } else if (confirmPass != value) {
-                              return 'Re-Enter New Password';
-                            } else {
+                              return 'Confirm your Password';
+                            } else if (c_password!=password || !validatePassword(c_password)) {
+                              return 'Re-Entered Password didn\'t match';
+                            } else if(c_password==password && validatePassword(c_password)){
                               return null;
                             }
                           },
                           decoration: InputDecoration(
+                            errorStyle: TextStyle(
+                              fontSize: 14.0,
+                            ),
                             hintText: 'Confirm Password',
                             enabledBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(8),
@@ -240,7 +374,7 @@ class _SignupState extends State<Signup> {
                              ),
                              
               ),
-                      ),
+                    ])),
                       Padding(
                     padding: const EdgeInsets.fromLTRB(70, 0, 0, 0),
                     child: Row(
@@ -291,24 +425,44 @@ class _SignupState extends State<Signup> {
                         width: 300,
                         child: TextButton(
                           onPressed: () {
-                            // if (_formKey.currentState!.validate()) {
-                            //   print("ok");
-                            //   // save();
-                            //  } else {
-                            //     print("not ok");
-                            //   }
-                            {
-                             AuthService().addUser(name, email, password).then((val) {
-                                 Fluttertoast.showToast(
-                                  msg: val.data['msg'],
-                                  toastLength: Toast.LENGTH_SHORT,
-                                  gravity: ToastGravity.BOTTOM,
-                                  timeInSecForIosWeb: 1,
-                                  backgroundColor: Colors.green,
-                                  textColor:Colors.white,
-                                  fontSize:16.0
-                      );
+                            if (_formKey.currentState!.validate()) {
+                              print("ok");
+                              // save();
+                              if(agree == false)
+                              {
+                                Fluttertoast.showToast(
+                                msg: "Agree to our terms and conditions",
+                                toastLength: Toast.LENGTH_SHORT,
+                                gravity: ToastGravity.BOTTOM,
+                                backgroundColor: Colors.red,
+                                textColor:Colors.white,
+                                fontSize:16.0
+                                );
+                              }
+                              if (agree == true) 
+                              {
+                                AuthService().addUser(name, email, password).then((val) {
+                                //  Fluttertoast.showToast(
+                                //   msg: val.data['msg'],
+                                //   toastLength: Toast.LENGTH_SHORT,
+                                //   gravity: ToastGravity.BOTTOM,
+                                //   timeInSecForIosWeb: 1,
+                                //   backgroundColor: Colors.green,
+                                //   textColor:Colors.white,
+                                //   fontSize:16.0
+                              // );
                                 });
+                                 Navigator.push(
+                                context,
+                                MaterialPageRoute(builder: (context) => Welcome()
+                                ));
+                              }
+                             } else {
+                                print("not ok");
+                                
+                              }
+                            {
+                             
                               } 
                             },
                             child: Text("Sign Up", style: TextStyle(fontSize: 20),),
@@ -321,7 +475,9 @@ class _SignupState extends State<Signup> {
                           ),
                       ),
                     ),
+                    
                 ),
+              
                 Padding(
                     padding: const EdgeInsets.fromLTRB(80, 5, 50, 0),
                     child: Row(
