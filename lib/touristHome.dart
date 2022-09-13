@@ -160,7 +160,7 @@ class _TouristHomeState extends State<TouristHome> {
                           ),
                         ),
                         Container(
-                          margin: const EdgeInsets.only(left: 87.25),
+                          margin: const EdgeInsets.only(left: 80),
                           width: 150,
                           height: 150,
                           decoration: const BoxDecoration(
