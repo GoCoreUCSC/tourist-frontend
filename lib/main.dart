@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/explore_page.dart';
+import 'package:frontend/profile2.dart';
 import 'package:frontend/touristHome.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'activitySelection.dart';
@@ -28,6 +29,7 @@ void main() {
     
     debugShowCheckedModeBanner: false,
       //  home: Signup()
+    // home: ProfilePage2() 
      home:MyHomePage()
     // home:Tours()
     // home:Home()

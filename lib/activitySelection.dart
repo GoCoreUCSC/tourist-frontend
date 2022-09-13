@@ -1,3 +1,4 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'dart:collection';
@@ -25,15 +26,61 @@ class Selectactivities extends StatefulWidget {
 
 
 class _SelectactivitiesState extends State<Selectactivities> {
+late Response response;
+  Dio dio = Dio();
+
+  bool error = false; //for error status
+  bool loading = false; //for data featching status
+  String errmsg = ""; //to assing any error message from API/runtime
+  // var apidata; //for decoded JSON data
 String name, token;
 // String name;
  _SelectactivitiesState(this.name,this.token);
-List<String> Cities = ['Hiking', 'Surfing', 'Kayaking', 'Camping','Swimming', 'Beaching', 'Whale Watching', 'KiteSurfing', 'Wildlife Safari', 'Scuba Diving', 'Snorkelling'];
+   List<dynamic> _allUsers= [];
+
+  List<dynamic> _foundUsers=[];
+List<String> Activities = ['Hiking', 'Surfing', 'Kayaking', 'Camping','Swimming', 'Beaching', 'Whale Watching', 'KiteSurfing', 'Wildlife Safari', 'Scuba Diving', 'Snorkelling'];
 
 List<String> images = ["hiking.jpg", "ad1f6611-16d5-49ec-94da-98c1c7e0e186dc42015a-f16a-47ca-b3ad-330d5bee6557.jpg", "caption.jpg", "Camping-2-1024x513.jpg","poolside.jpg", "beaches-in-sri-lanka-14.jpg", "01-Measures.jpg", "1_Sri_Lanka_Kitesurf_Holiday_centre_view_800x533.jpg","image_0aac853a4d.jpg", "tourism-sri-lanka-diving-hikkaduwa-tourism-sri-lanka.jpg", "Snorkeling-in-kalpitiya-lagoon.jpg"];
   
   HashSet selectActivity = new HashSet();
+  HashSet activityID = new HashSet();
   bool isMultiSelectionEnabled = true;
+
+  getData() async { 
+      setState(() {
+         loading = true;  //make loading true to show progressindicator
+      });
+
+      String url = "https://gocore.herokuapp.com/getactivities";
+      //don't use "http://localhost/" use local IP or actual live URL
+
+      Response response = await dio.get(url); 
+      _allUsers = response.data; //get JSON decoded data from response
+       _foundUsers=_allUsers;
+      // _allUsers= apidata;
+      if(response.statusCode == 200){
+          //fetch successful
+          // if(apidata["error"]){ //Check if there is error given on JSON
+          //     error = true; 
+          //     errmsg  = apidata["msg"]; //error message from JSON
+          // }
+      }else{ 
+          error = true;
+          errmsg = "Error while fetching data.";
+      }
+
+      loading = false;
+      setState(() {}); //refresh UI 
+  }
+
+  @override
+  void initState() {
+    getData(); //fetching data
+    super.initState();
+  }
+
+
   
 
 
@@ -78,12 +125,14 @@ List<String> images = ["hiking.jpg", "ad1f6611-16d5-49ec-94da-98c1c7e0e186dc4201
                     mainAxisSpacing: 15,
                     //mainAxisExtent: 264,
                     ), 
-                  itemCount: Cities.length,
+                  itemCount: _allUsers.length,
                   itemBuilder: (context, index) {
-                    final item = images[index];
-                    final item2 = Cities[index];
+                    final img = _allUsers[index]['img'];
+                    final acName = _allUsers[index]['activity'];
+                    // final item = images[index];
+                    // final item2 = Activities[index];
 
-                    return getGridItem(item,item2);
+                    return getGridItem(img,acName);
                   }
                  ),
           ),
@@ -193,13 +242,13 @@ List<String> images = ["hiking.jpg", "ad1f6611-16d5-49ec-94da-98c1c7e0e186dc4201
         : "No item selected";
   }
   
-  void doMultiSelection(String item, String item2) {
+  void doMultiSelection(String img, String acName) {
     if (isMultiSelectionEnabled) {
       setState(() {
-        if (selectActivity.contains(item2)) {
-          selectActivity.remove(item2);
+        if (selectActivity.contains(acName)) {
+          selectActivity.remove(acName);
         } else {
-          selectActivity.add(item2);
+          selectActivity.add(acName);
         }
       });
     } else {
@@ -207,7 +256,7 @@ List<String> images = ["hiking.jpg", "ad1f6611-16d5-49ec-94da-98c1c7e0e186dc4201
     }
   }
 
-   GridTile getGridItem(String item, String item2) {
+   GridTile getGridItem(String img, String acName) {
     return GridTile(
       footer: Container(
           decoration: const BoxDecoration(
@@ -218,7 +267,7 @@ List<String> images = ["hiking.jpg", "ad1f6611-16d5-49ec-94da-98c1c7e0e186dc4201
           alignment: Alignment.center,
           
           child:  Text(
-            item2,
+            acName,
             style: const TextStyle(
                 color: Color.fromARGB(255, 0, 0, 0),
                 fontSize: 16,
@@ -233,11 +282,11 @@ List<String> images = ["hiking.jpg", "ad1f6611-16d5-49ec-94da-98c1c7e0e186dc4201
               
         child: InkWell(
           onTap: () {
-            doMultiSelection(item,item2);
+            doMultiSelection(img,acName);
           },
           onLongPress: () {
             isMultiSelectionEnabled = true;
-            doMultiSelection(item,item2);
+            doMultiSelection(img,acName);
           },
           child: Stack(
             children: [
@@ -249,15 +298,15 @@ List<String> images = ["hiking.jpg", "ad1f6611-16d5-49ec-94da-98c1c7e0e186dc4201
                           image: DecorationImage(
                             fit: BoxFit.fill,
                             image: AssetImage(
-                              "assets/" + item,
+                              "images/" + img,
                               ),
-                              colorFilter: new ColorFilter.mode(Colors.black.withOpacity(selectActivity.contains(item2) ? 1 : 0), BlendMode.color), 
+                              colorFilter: new ColorFilter.mode(Colors.black.withOpacity(selectActivity.contains(acName) ? 1 : 0), BlendMode.color), 
                           ),
                         ),
                       ),
               
               Visibility(
-                  visible: selectActivity.contains(item2),
+                  visible: selectActivity.contains(acName),
                   // ignore: prefer_const_constructors
                   child: Align(
                     alignment: Alignment.center,

@@ -249,7 +249,7 @@ class _EditProfileState extends State<EditProfile> {
               width: 100,
               margin: const EdgeInsets.only(left: 100, right: 100),
               decoration: BoxDecoration(
-                color: const Color.fromARGB(255, 23, 2, 247),
+                color: Color(0xFF1702F7),
                 borderRadius: BorderRadius.circular(10),
               ),
               child: GestureDetector(
