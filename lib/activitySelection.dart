@@ -160,12 +160,16 @@ List<String> images = ["hiking.jpg", "ad1f6611-16d5-49ec-94da-98c1c7e0e186dc4201
                         ),
                       ),
                       ),
-                onPressed: () {
+                onPressed: () async {
                   if (selectActivity.isNotEmpty) {
-                    Navigator.pushReplacement(
+                    final boolData = await Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) =>  Selecttraveldestinations(selectActivity,name,token)));
+                          builder: (context) =>  Selecttraveldestinations(selectActivity,name,token)),
+                          );
+                          setState(() {
+                            selectActivity = boolData;
+                          });
                   }
                   else{
                     Fluttertoast.showToast(

@@ -73,7 +73,7 @@ class _SigninState extends State<Signin> {
                         height: 20,
                       ),
                       Text(
-                        "Sign In - Tourist",
+                        "Sign In",
                         style: GoogleFonts.radioCanada(
                             fontWeight: FontWeight.bold,
                             fontSize: 45,
@@ -91,16 +91,21 @@ class _SigninState extends State<Signin> {
                           },
                           validator: (value) {
                             if (value!.isEmpty) {
-                              return 'Enter something';
-                            } else if (RegExp(
-                                    r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
-                                .hasMatch(value)) {
+                              return 'Enter your email';
+                            } 
+                            // else if (RegExp(
+                            //         r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
+                            //     .hasMatch(value)) {
+                            //   return null;
+                            // } 
+                            else {
                               return null;
-                            } else {
-                              return 'Enter valid Username';
                             }
                           }, 
                           decoration: InputDecoration(
+                            errorStyle: TextStyle(
+                              fontSize: 14.0,
+                            ),
                             hintText: 'Username',
                             enabledBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(8),
@@ -133,16 +138,21 @@ class _SigninState extends State<Signin> {
                           },
                           validator: (String? value) {
                             if (value!.isEmpty) {
-                              return 'Enter something';
-                            } else if (RegExp(
-                                    r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
-                                .hasMatch(value)) {
-                              return null;
-                            } else {
+                              return 'Enter your password';
+                            } 
+                            // else if (RegExp(
+                            //         r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
+                            //     .hasMatch(value)) {
+                            //   return null;
+                            // } 
+                            else {
                               return null;
                             }
                           },
                           decoration: InputDecoration(
+                            errorStyle: TextStyle(
+                              fontSize: 14.0,
+                            ),
                             hintText: 'Password',
                             enabledBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(8),
@@ -205,7 +215,7 @@ class _SigninState extends State<Signin> {
                         width: 300,
                         child: TextButton(
                           onPressed: () {
-                            // if (_formKey.currentState!.validate()) {
+                            if (_formKey.currentState!.validate()) {
                             //   print("ok");
                             //   // save();
                             //  } else {
@@ -241,8 +251,8 @@ class _SigninState extends State<Signin> {
                                 }
                                 }
                                 );
-                              } 
-                            },
+                              } ;
+                            }},
                             child: Text("Login", style: TextStyle(fontSize: 20),),
                             style: TextButton.styleFrom(
                               primary: Colors.white,  //Text Color

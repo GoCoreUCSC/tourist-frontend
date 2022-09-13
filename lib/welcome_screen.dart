@@ -2,7 +2,6 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:frontend/signin.dart';
 
-
   
 class Welcome extends StatefulWidget {
   @override
@@ -23,11 +22,11 @@ class _WelcomeState extends State<Welcome> {
     return Scaffold(
       body: Column(
         mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
 
           Container(
-            padding: EdgeInsets.only(left: 20, top: 0,right: 20, bottom: 0,),
+            padding: EdgeInsets.only(left: 40, top: 0,right: 20, bottom: 0,),
             child: Text(
                             "Welcome to GoCore",
                             textAlign: TextAlign.center,
@@ -89,9 +88,9 @@ class _WelcomeState extends State<Welcome> {
                   child: const Text('Proceed to Sign In',
                   overflow: TextOverflow.visible,
                   style: TextStyle(
-                        fontSize: 22,
+                        fontSize: 20,
                         color: Colors.white,
-                        fontWeight: FontWeight.w500,
+                        fontWeight: FontWeight.w700,
                       )),
               ),
             ),
