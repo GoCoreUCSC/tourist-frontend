@@ -312,7 +312,7 @@ class _SignupState extends State<Signup> {
                               minHeight: 5,
                               color: password_strength <= 1 / 5
                                   ? Colors.red
-                                   password_strength <= 2 / 5
+                                  : password_strength <= 2 / 5
                                   ? Colors.orange
                                   : password_strength == 3 / 5
                                   ? Colors.yellow

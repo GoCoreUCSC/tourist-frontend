@@ -99,7 +99,7 @@ class _SigninState extends State<Signin> {
                             //   return null;
                             // } 
                             else {
-                              return 'Enter a valid Email';
+                              return null;
                             }
                           }, 
                           decoration: InputDecoration(
