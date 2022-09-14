@@ -8,7 +8,7 @@ import 'package:frontend/welcome_screen.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/src/rendering/flex.dart';
-import 'package:progress_indicator_button/progress_button.dart';
+
 //import 'activities.dart';
 // import 'package:frontend/signup.dart';
 // import 'package:frontend/dashboard.dart';
