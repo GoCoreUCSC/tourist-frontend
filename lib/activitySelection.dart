@@ -52,7 +52,7 @@ List<String> images = ["hiking.jpg", "ad1f6611-16d5-49ec-94da-98c1c7e0e186dc4201
          loading = true;  //make loading true to show progressindicator
       });
 
-      String url = "https://gocore.herokuapp.com/getactivities";
+      String url = "https://gocore.herokuapp.com/getactivities/";
       //don't use "http://localhost/" use local IP or actual live URL
 
       Response response = await dio.get(url); 
@@ -92,17 +92,18 @@ List<String> images = ["hiking.jpg", "ad1f6611-16d5-49ec-94da-98c1c7e0e186dc4201
 
   return Scaffold(
       appBar: AppBar(
-          leading: GestureDetector(
-          child: const Icon( Icons.arrow_back_ios, color: Colors.white,  ),
-          onTap: () {
-            Navigator.push(
-                         context,
-                         MaterialPageRoute(
-                           builder: (context) =>  MainPage(name,token)));
-          } ,
-          ),
+          // leading: GestureDetector(
+          // //child: const Icon( Icons.arrow_back_ios, color: Colors.white,  ),
+          // onTap: () {
+          //   Navigator.push(
+          //                context,
+          //                MaterialPageRoute(
+          //                  builder: (context) =>  MainPage(name,token)));
+          // } ,
+          // ),
           //backgroundColor: const Color(0xFFF67715),
-          title: Text('What do you like to do?',style: TextStyle(color: Colors.white),),
+          title: Text('   What do you like to do?',style: TextStyle(color: Colors.white),),
+          automaticallyImplyLeading:false
       ),
 
       
@@ -162,13 +163,14 @@ List<String> images = ["hiking.jpg", "ad1f6611-16d5-49ec-94da-98c1c7e0e186dc4201
                       ),
                 onPressed: () async {
                   if (selectActivity.isNotEmpty) {
+                    print(selectActivity);
                     final boolData = await Navigator.push(
                         context,
                         MaterialPageRoute(
                           builder: (context) =>  Selecttraveldestinations(selectActivity,name,token)),
                           );
                           setState(() {
-                            selectActivity = boolData;
+                           selectActivity = boolData;
                           });
                   }
                   else{

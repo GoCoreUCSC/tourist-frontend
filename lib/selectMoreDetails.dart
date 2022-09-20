@@ -1,5 +1,5 @@
 import 'dart:collection';
-import 'dart:ffi';
+//import 'dart:ffi';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
@@ -37,7 +37,7 @@ String name, token;
 
 final days = List<int>.generate(50, ((index) => index+1));
 final travellers = List<int>.generate(50, ((index) => index+1)); 
-final List<String> payments = ['Cash Payment','Card Payment'];
+final List<String> payments = ['Cash Payment','Card Payment', 'Both'];
 
 String? selectedValue;
 
@@ -60,7 +60,7 @@ final _formKey = GlobalKey<FormState>();
         double height = MediaQuery.of(context).size.height;
         return Scaffold(
           appBar: AppBar(
-        title: const Text('More Details',style: TextStyle(color: Colors.white),),
+        title: const Text('   More Details',style: TextStyle(color: Colors.white),),
       //   actions: <Widget>[
       //     IconButton(
       //       icon: const Icon(Icons.support_agent_sharp, color: Colors.white,), onPressed: () {  },
@@ -68,18 +68,25 @@ final _formKey = GlobalKey<FormState>();
       // ],
         
         //backgroundColor: const Color(0xFFF67715),
-        leading: GestureDetector(
-          child: const Icon( Icons.arrow_back_ios, color: Colors.white,  ),
-          onTap: () {
-            Navigator.push(
-                         context,
-                         MaterialPageRoute(
-                           builder: (context) =>  Selecttraveldestinations(selectActivity,name,token)));
-          } ,
-        ) ,
+        // leading: GestureDetector(
+        //   child: const Icon( Icons.arrow_back_ios, color: Colors.white,  ),
+        //   onTap: () {
+        //     Navigator.push(
+        //                  context,
+        //                  MaterialPageRoute(
+        //                    builder: (context) =>  Selecttraveldestinations(selectActivity,name,token)));
+        //   } ,
+        // ) ,
+        automaticallyImplyLeading:false
         
       ),
-    body: Form(
+    body: 
+    WillPopScope(
+        onWillPop: () async {
+             Navigator.pop(context,selectActivity );
+             return false;
+          },
+         child: Form(
       key: _formKey,
       
         child: Column(
@@ -590,7 +597,7 @@ const SizedBox(height: 100),
           ],
         ),
       
-    ),
+    ),),
         );
     }
 }
