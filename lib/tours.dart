@@ -75,8 +75,9 @@ class _ToursState extends State<Tours> {
       setState(() {
          loading = true;  //make loading true to show progressindicator
       });
-
-      String url = "https://gocore.herokuapp.com/viewplans";
+ print(startDate);
+ print(endDate);
+      String url = "https://gocore.herokuapp.com/viewplans/$selectActivity/$selectItems/$valueP/$valueD/$valueT";
       //don't use "http://localhost/" use local IP or actual live URL
 
       Response response = await dio.get(url); 
@@ -94,7 +95,7 @@ class _ToursState extends State<Tours> {
       }
 
       loading = false;
-      setState(() {}); //refresh UI 
+      setState(() {}); //refresh UI v
   }
 
   @override
@@ -113,16 +114,17 @@ var formatter = NumberFormat('###,###,###');
       appBar: AppBar(
         title: const Text('Tours'),
         //backgroundColor: Color(0xffF67715),
-        elevation: 0.0,
-        leading: GestureDetector(
-          child: const Icon( Icons.arrow_back_ios, color: Colors.white,  ),
-          onTap: () {
-            Navigator.push(
-                         context,
-                         MaterialPageRoute(
-                           builder: (context) =>  Selectmoredetails(selectActivity,selectItems,name,token)));
-          } ,
-        ) 
+        // elevation: 0.0,
+        // leading: GestureDetector(
+        //   child: const Icon( Icons.arrow_back_ios, color: Colors.white,  ),
+        //   onTap: () {
+        //     Navigator.push(
+        //                  context,
+        //                  MaterialPageRoute(
+        //                    builder: (context) =>  Selectmoredetails(selectActivity,selectItems,name,token)));
+        //   } ,
+        // ) 
+        automaticallyImplyLeading:false
       ),
       body: 
       loading? //printing the JSON recieved
@@ -164,7 +166,7 @@ var formatter = NumberFormat('###,###,###');
                                           padding: new EdgeInsets.all(5.0),
                                           // margin: EdgeInsets.only(right: 10.0),
                                           alignment: Alignment.topLeft,
-                                            child: Text(_allTours[index]['destination'], style: GoogleFonts.openSans(
+                                            child: Text(_allTours[index]['planName'], style: GoogleFonts.openSans(
                                                         fontSize: 16.0,
                                                         fontWeight: FontWeight.w900,
                                                         color: Color(0xff1554F6)),),
