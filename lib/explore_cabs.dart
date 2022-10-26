@@ -7,13 +7,19 @@ import 'package:dio/dio.dart';
 
 
 class ExploreCabs extends StatefulWidget {
-  const ExploreCabs({Key? key}) : super(key: key);
+   String name, token;
+   ExploreCabs(this.name, this.token);
 
   @override
-  State<ExploreCabs> createState() => _ExploreCabsState();
+  State<ExploreCabs> createState() 
+  {
+    return _ExploreCabsState(this.name ,this.token);
+  }
 }
 
 class _ExploreCabsState extends State<ExploreCabs> {
+  String name, token;
+  _ExploreCabsState(this.name, this.token);
   
 late Response response;
   Dio dio = Dio();

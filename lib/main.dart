@@ -5,6 +5,7 @@ import 'package:frontend/touristHome.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'activitySelection.dart';
 import 'booking_page.dart';
+import 'customizeData.dart';
 import 'launchscreen.dart';
 import 'main_page.dart';
 //import 'package:frontend/welcomescreen1.dart';
@@ -31,6 +32,7 @@ void main() {
       //  home: Signup()
     // home: ProfilePage2() 
      home:MyHomePage()
+     //home:Customization()
     // home:Tours()
     // home:Home()
     // home:ExplorePage()

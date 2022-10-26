@@ -1,5 +1,6 @@
 import 'dart:ui';
 
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/src/foundation/key.dart';
@@ -7,7 +8,7 @@ import 'package:flutter/src/widgets/framework.dart';
 import 'package:frontend/hiking.dart';
 import 'package:frontend/kayaking.dart';
 import 'package:frontend/surfing.dart';
-import 'package:frontend/tours_booking.dart';
+import 'package:frontend/plan_for_booking.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import 'activitySelection.dart';
@@ -29,6 +30,13 @@ class TouristHome extends StatefulWidget {
 class _TouristHomeState extends State<TouristHome> {
   String name, token;
   // String name;
+    late Response response;
+  Dio dio = Dio();
+
+  bool error = false; //for error status
+  bool loading = false; //for data featching status
+  String errmsg = ""; //to assing any error message from API/runtime
+  // var apidata; //for decoded JSON data
    _TouristHomeState(this.name,this.token);
   List activities = [
     "air-balloon.png",
@@ -66,8 +74,85 @@ class _TouristHomeState extends State<TouristHome> {
   List names = ["Ballooning", "Hiking", "Kayaking","Surfing", "Snorkeling"];
   List names1 = [Ballooning(), Hiking(), Kayaking(), Surfing(), Hiking()];
 
+  // late Response response;
+  // Dio dio = Dio();
+
+  // bool error = false; //for error status
+  // bool loading = false; //for data featching status
+  // String errmsg = ""; //to assing any error message from API/runtime
+  // // var apidata; //for decoded JSON data
+  
+  // List<dynamic> _allHotels= [];
+  // List<dynamic> _foundHotels=[];
+
+  // getData() async { 
+  //     setState(() {
+  //        loading = true;  //make loading true to show progressindicator
+  //     });
+
+  //     String url = "https://gocore.herokuapp.com/viewhotels";
+  //     //don't use "http://localhost/" use local IP or actual live URL
+
+  //     Response response = await dio.get(url); 
+  //     _allHotels = response.data; //get JSON decoded data from response
+  //     _foundHotels=_allHotels;// _allUsers= apidata;
+  //     if(response.statusCode == 200){
+  //         //fetch successful
+  //         // if(apidata["error"]){ //Check if there is error given on JSON
+  //         //     error = true; 
+  //         //     errmsg  = apidata["msg"]; //error message from JSON
+  //         // }
+  //     }else{ 
+  //         error = true;
+  //         errmsg = "Error while fetching data.";
+  //     }
+
+  //     loading = false;
+  //     setState(() {}); //refresh UI 
+  // }
+
+  // @override
+  // void initState() {
+  //   getData(); //fetching data
+  //   super.initState();
+  // }
+
+   List<dynamic> _allUsers= [];
+    getData() async { 
+      setState(() {
+         loading = true;  //make loading true to show progressindicator
+      });
+
+      String url = "https://gocore.herokuapp.com/viewplans";
+      //don't use "http://localhost/" use local IP or actual live URL
+
+      Response response = await dio.get(url); 
+      _allUsers = response.data; //get JSON decoded data from response
+      // _allUsers= apidata;
+      if(response.statusCode == 200){
+          //fetch successful
+          // if(apidata["error"]){ //Check if there is error given on JSON
+          //     error = true; 
+          //     errmsg  = apidata["msg"]; //error message from JSON
+          // }
+      }else{ 
+          error = true;
+          errmsg = "Error while fetching data.";
+      }
+
+      loading = false;
+      setState(() {}); //refresh UI 
+  }
+
+  @override
+  void initState() {
+    getData(); //fetching data
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
+    
     return Scaffold(
       body: ListView.builder(
         itemCount: 1,
@@ -288,9 +373,11 @@ class _TouristHomeState extends State<TouristHome> {
                 width: double.maxFinite,
                 margin: const EdgeInsets.only(left: 20),
                 child: ListView.builder(
-                    itemCount: tours.length,
+                    itemCount: _allUsers.length,
                     scrollDirection: Axis.horizontal,
-                    itemBuilder: (_, index) {
+                    itemBuilder: (context, index) {
+                      final img = _allUsers[index]['img'];
+                      final pName = _allUsers[index]['planName'];
                       return Container(
                         margin: const EdgeInsets.only(right: 20),
                         child: Stack(
@@ -317,7 +404,7 @@ class _TouristHomeState extends State<TouristHome> {
                                           ),],
                                   image: DecorationImage(
                                       image:
-                                          AssetImage("images/" + tours[index]),
+                                          AssetImage("images/" + img),
                                       fit: BoxFit.cover),
                                 ),
                               ),
@@ -341,7 +428,7 @@ class _TouristHomeState extends State<TouristHome> {
                                 padding: const EdgeInsets.all(7),
                                 alignment: Alignment.center,
                                 child: Text(
-                                  tour_names[index],
+                                  pName,
                                   style: const TextStyle(
                                     color: Colors.white,
                                     fontSize: 15,

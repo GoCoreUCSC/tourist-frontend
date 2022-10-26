@@ -8,14 +8,17 @@ import 'package:frontend/explore_tours.dart';
 
 
 class ExplorePage extends StatefulWidget {
-  const ExplorePage({Key? key}) : super(key: key);
+   String name, token;
+   ExplorePage(this.name, this.token);
 
   @override
-  State<ExplorePage> createState() => _ExplorePageState();
+  State<ExplorePage> createState()  { return _ExplorePageState(this.name, this.token);}
 }
 
 class _ExplorePageState extends State<ExplorePage>
     with TickerProviderStateMixin {
+      String name, token;
+  _ExplorePageState(this.name, this.token);
   List Cities = ["Colombo", "Sigiriya", "Kandy", "Unawatuna"];
 
   List Descriptions = [
@@ -120,9 +123,9 @@ class _ExplorePageState extends State<ExplorePage>
           child: TabBarView(
             controller: _tabController,
             children: [
-              ExploreTours(),
-              ExploreHotels(),
-              ExploreCabs(),
+              ExploreTours(name,token),
+              ExploreHotels(name,token),
+              ExploreCabs(name,token),
             ],
           ),
         ),
