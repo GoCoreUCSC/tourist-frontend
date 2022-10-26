@@ -6,7 +6,7 @@ import 'package:flutter/rendering.dart';
 import 'package:dio/dio.dart';
 import 'package:frontend/plan.dart';
 import 'package:frontend/tours.dart';
-import 'package:frontend/tours_booking.dart';
+import 'package:frontend/plan_for_booking.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 

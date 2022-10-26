@@ -54,7 +54,7 @@ class _MainPageState extends State<MainPage> {
     return Scaffold(
       body: 
       //pages[currentIndex],
-      (currentIndex==0)?TouristHome(name,token) :(currentIndex==1)?ExplorePage():(currentIndex==2)?BookingPage(name,token) :ProfilePage(name,token),
+      (currentIndex==0)?TouristHome(name,token) :(currentIndex==1)?ExplorePage(name,token):(currentIndex==2)?BookingPage(name,token) :ProfilePage(name,token),
       bottomNavigationBar: BottomNavigationBar(
         onTap: onTap,
         currentIndex: currentIndex,

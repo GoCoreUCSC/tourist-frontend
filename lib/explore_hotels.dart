@@ -4,15 +4,19 @@ import 'package:flutter/rendering.dart';
 // import 'package:flutter/src/foundation/key.dart';
 // import 'package:flutter/src/widgets/framework.dart';
 import 'package:dio/dio.dart';
-
+import 'package:intl/intl.dart';
 
 
 
 class ExploreHotels extends StatefulWidget {
-  const ExploreHotels({Key? key}) : super(key: key);
+  String name, token;
+   ExploreHotels(this.name, this.token);
 
   @override
-  State<ExploreHotels> createState() => _ExploreHotelsState();
+  State<ExploreHotels> createState() {
+    return _ExploreHotelsState(this.name ,this.token);
+  }
+ 
 }
 
 class StarDisplay extends StatelessWidget {
@@ -34,6 +38,8 @@ class StarDisplay extends StatelessWidget {
 }
 
 class _ExploreHotelsState extends State<ExploreHotels> {
+  String name, token;
+  _ExploreHotelsState(this.name, this.token);
   // List Hotels = [
   //   "Hikka Tranz Cinnamon",
   //   "Habarana Lodge",
@@ -118,6 +124,7 @@ void _runFilter(String enteredKeyword) {
     });
   } 
 
+var formatter = NumberFormat('###,###,###');
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -129,119 +136,187 @@ void _runFilter(String enteredKeyword) {
                          height: 30.0,
                          width: 30.0),
                        ):
-      ListView.builder(
-        itemCount: _foundHotels.length,
-        scrollDirection: Axis.vertical,
-        itemBuilder: (BuildContext context, int index) => 
-        InkWell(
-          onTap: () => null,
-        child:Container(
-          padding: EdgeInsets.only(left: 20.0, right: 20),
-          child: Card(
-            margin: EdgeInsets.only(bottom: 20),
-            elevation: 10.0,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(20),
-            ),
-            child: Container(
-              width: 360,
-              decoration: BoxDecoration(
-                color: Color.fromARGB(255, 255, 255, 255),
-                borderRadius: BorderRadius.circular(20),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.grey.withOpacity(0.3),
-                    offset: Offset(-10.0, 10.0),
-                    blurRadius: 20.0,
-                    spreadRadius: 4.0,
-                  ),
-                ],
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Container(
-                        width: 150,
-                        height: 150,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(20),
-                          image: DecorationImage(
-                            fit: BoxFit.fill,
-                            image: AssetImage('images/' +  _foundHotels[index]['img']),
-                          ),
-                        ),
-                      ),
-                      SizedBox(width: 20, height: 20,),
-                      SingleChildScrollView(
-                        padding: EdgeInsets.only(top: 15),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Padding(
-                              padding: const EdgeInsets.only(top:10.0),
-                              child: Text(
-                                 _foundHotels[index]['hotelName'],
-                                style: const TextStyle(
-                                    color: Colors.black,
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.bold),
-                              ),
-                            ),
-                            SizedBox(height: 15),
-                            Container(
-                              width: 200,
-                              child: 
-                              RichText(
-                              text: TextSpan(
-                                children: [
-                                  WidgetSpan(
-                                    child: IconTheme(
-                                    data: IconThemeData(
-                                                  color: Colors.amber,
-                                                  size: 15,
+      Container(
+              // child: Padding(
+              //   padding: const EdgeInsets.all(10),
+              child: Column(
+                children: [
+                  Expanded(
+                    child: _allHotels.isNotEmpty
+                        ? Padding(
+                            padding: const EdgeInsets.fromLTRB(30, 10, 30, 10),
+                            child: ListView.builder(
+                              itemCount: _allHotels.length,
+                              itemBuilder: (context, index) => 
+ Card(
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(15.0),
+                                  // side: BorderSide(color: Color(0xff1554F6), width: 2),
+                                ),
+                                child: Container(
+                                  padding: new EdgeInsets.all(12.0),
+                                  height: 220,
+                                  width: 250,
+                                  child: ListView(
+                                    children: [
+                                      Row(
+                                        children: [
+                                          Expanded(
+                                            flex: 5,
+                                            child: Container(
+                                              padding: new EdgeInsets.all(5.0),
+                                              // margin: EdgeInsets.only(right: 10.0),
+                                              alignment: Alignment.topLeft,
+                                              child: Text(
+                                                _allHotels[index]['hotelName'],
+                                                style: TextStyle(
+                                                    fontSize: 16.0,
+                                                    fontWeight: FontWeight.w900,
+                                                    color: Color(0xff1554F6)),
+                                              ),
+                                            ),
+                                          ),
+                                          Expanded(
+                                            child: Container(
+                                              padding: new EdgeInsets.all(5.0),
+                                              alignment: Alignment.topRight,
+                                              child: Text(
+                                                _allHotels[index]['star']
+                                                    .toString(),
+                                                style: TextStyle(
+                                                    fontSize: 14.0,
+                                                    fontWeight: FontWeight.w700,
+                                                    color: Color.fromARGB(
+                                                        255, 8, 8, 8)),
+                                              ),
+                                            ),
+                                          ),
+                                          Container(
+                                            alignment: Alignment.topRight,
+                                            child: IconTheme(
+                                              data: IconThemeData(
+                                                color: Colors.amber,
+                                                size: 15,
+                                              ),
+                                              child: StarDisplay(
+                                                  value: _allHotels[index]
+                                                          ['star']
+                                                      .round()),
+                                            ),
+                                          ),
+                                          
+                                        ],
+                                      ), //your 1st Row
+                                      Divider(
+                                        thickness: 2,
+                                      ),
+                                      Row(
+                                        children: [
+                                          Padding(
+                                            padding:
+                                                const EdgeInsets.only(top: 8.0),
+                                            child: Container(
+                                              width: 150,
+                                              height: 115,
+                                              decoration: BoxDecoration(
+                                                borderRadius:
+                                                    BorderRadius.circular(20),
+                                                image: DecorationImage(
+                                                  fit: BoxFit.fill,
+                                                  image: AssetImage('images/' +
+                                                      _allHotels[index]['img']),
                                                 ),
-                                    child: StarDisplay(value: _foundHotels[index]['star']),
-                                    ),
+                                              ),
+                                            ),
+                                          ),
+                                          Container(
+                                            child: Expanded(
+                                              child: Container(
+                                                child: ListTile(
+                                                  title: Padding(
+                                                    padding:
+                                                        const EdgeInsets.only(
+                                                            top: 10,
+                                                            bottom: 10.0,
+                                                            left: 20,
+                                                            right: 5),
+                                                    child: Text(
+                                                        _allHotels[index]['location'],
+                                                        style: TextStyle(
+                                                            fontSize: 14.0,
+                                                            fontWeight:
+                                                                FontWeight.w700,
+                                                            color:
+                                                                Color.fromARGB(
+                                                                    255,
+                                                                    8,
+                                                                    8,
+                                                                    8)),
+                                                        textAlign:
+                                                            TextAlign.right),
+                                                  ),
+                                                  subtitle: Container(
+                                                child: Padding(
+                                                  padding: const EdgeInsets.only(
+                                                      top: 10,
+                                                      bottom: 10.0,
+                                                      left: 5,
+                                                      right: 5),
+                                                  child: Text(
+                                                    'Available Rooms ${formatter.format(_allHotels[index]['noOfRooms']).toString()}',
+                                                    style: TextStyle(
+                                                            fontSize: 14.0,
+                                                            fontWeight:
+                                                                FontWeight.w700,
+                                                            color:
+                                                                Color.fromARGB(
+                                                                    255,
+                                                                    8,
+                                                                    8,
+                                                                    8)),
+                                                        textAlign:
+                                                            TextAlign.center
+                                                  ),
+                                                ),
+                                                decoration: BoxDecoration(
+                                                  color: Color.fromARGB(179, 234, 242, 255),
+                                                  // border: Border.all(
+                                                  //   width: 1,
+                                                  // ),
+                                                  borderRadius: BorderRadius.circular(12),
+                                              ),
+                                              ),
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      ), //your 2nd Row
+
+                                    ],
                                   ),
-                                  //  TextSpan(
-                                  //   text: _foundHotels[index]['star'].toString(),
-                                  //   style: const TextStyle(
-                                  //     color: Colors.black,
-                                  //     fontSize: 14.0,
-                                  // ),
-                                  // ),
-                                ],
-                              ),
-                            )    
-                              ),
-                              SizedBox(height: 10),
-                            Container(
-                              width: 200,
-                              child: Text(
-                                 _foundHotels[index]['location'],
-                                style: const TextStyle(
-                                  color: Colors.black,
-                                  fontSize: 14.0,
-                                  fontWeight: FontWeight.bold
+                                  decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(15),
+                                      color: Colors.white,
+                                      boxShadow: [
+                                        BoxShadow(
+                                          color:
+                                              Color.fromARGB(96, 112, 112, 112),
+                                          blurRadius: 10,
+                                          offset: Offset(0, 5),
+                                        ),
+                                      ]),
                                 ),
                               ),
-                            ),
-                            ],
-                              ),
-                            ),
-                    ],
+       ))
+                        : const Text(
+                            'No results found',
+                            style: TextStyle(fontSize: 14),
+                          ),
                   ),
                 ],
               ),
             ),
-          ),
-        ),
-      ),
-      ),
     );
   }
 }

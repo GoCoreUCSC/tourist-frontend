@@ -1,15 +1,85 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/src/foundation/key.dart';
 import 'package:flutter/src/widgets/framework.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:frontend/main_page.dart';
+import 'package:dio/dio.dart';
+import 'package:intl/intl.dart';
 
-class ViewCustomizablePlans extends StatefulWidget {
-  const ViewCustomizablePlans({Key? key}) : super(key: key);
+class ViewPlans extends StatefulWidget {
+  String name, token,plan, guide;
+  ViewPlans(this.name, this.token, this.plan, this.guide);
+  //const BookingPlans({Key? key}) : super(key: key);
 
   @override
-  State<ViewCustomizablePlans> createState() => _ViewCustomizablePlans();
+  State<ViewPlans> createState() 
+  {
+    return _ViewPlans(this.name,this.token, this.plan, this.guide);
+  }
+ 
 }
 
-class _ViewCustomizablePlans extends State<ViewCustomizablePlans> {
+class _ViewPlans extends State<ViewPlans> {
+  String name, token, plan, guide;
+  _ViewPlans(this.name, this.token, this.plan, this.guide);
+
+  late Response response;
+  Dio dio = Dio();
+  bool error = false; //for error status
+  bool loading = false; //for data featching status
+  String errmsg = ""; //to assing any error message from API/runtime
+  // var apidata; //for decoded JSON data
+
+  // Map< dynamic> _Tour = [];
+  List<dynamic> _plan= [];
+  List<dynamic> _guide= [];
+  List<String> days = ['Day 01','Day 02','Day 03','Day 04','Day 05',];
+  
+    getData() async { 
+      setState(() {
+         loading = true;  //make loading true to show progressindicator
+      });
+ 
+      String url = "https://gocore.herokuapp.com/viewplan/$plan/$guide";
+      //don't use "http://localhost/" use local IP or actual live URL
+      print(plan);
+      print(guide);
+      Response response = await dio.get(url); 
+      Map<String, dynamic> map = response.data;
+      _plan = map["plan"];
+      _guide = map["guide"];
+       print(map);
+      print(_plan);
+      print(_plan[0]["img"]);
+      print(_guide);
+      // _Tour = response.data; //get JSON decoded data from response
+     
+      // _allUsers= apidata;
+      if(response.statusCode == 200){
+          //fetch successful
+          // if(apidata["error"]){ //Check if there is error given on JSON
+          //     error = true; 
+          //     errmsg  = apidata["msg"]; //error message from JSON
+          // }
+      }else{ 
+          error = true;
+          errmsg = "Error while fetching data.";
+      }
+
+      loading = false;
+      setState(() {}); //refresh UI v
+  }
+
+  @override
+  void initState() {
+    getData(); //fetching data
+    super.initState();
+  }
+
+  var formatter = NumberFormat('###,###,###');
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -24,20 +94,20 @@ class _ViewCustomizablePlans extends State<ViewCustomizablePlans> {
               child: Container(
                 width: double.maxFinite,
                 height: 260,
-                decoration: const BoxDecoration(
+                decoration: BoxDecoration(
                   image: DecorationImage(
-                    image: AssetImage("images/hiking.jpg"),
+                    image:  AssetImage('images/' + _plan[0]['img']),
                     fit: BoxFit.cover,
                   ),
                 ),
                 child: Container(
                   margin: const EdgeInsets.only(left: 15, top: 170),
-                  child: const Text(
-                    "Hiking Over the Hill\n3 Days, 2 Nights",
+                  child:  Text(
+                   " ${_plan[0]['planName']} \n ${_plan[0]['duration']} Days" ,
                     style: TextStyle(
                       color: Colors.white,
-                      fontSize: 20,
-                      fontWeight: FontWeight.w500,
+                      fontSize: 23,
+                      fontWeight: FontWeight.w600,
                     ),
                   ),
                 ),
@@ -81,9 +151,10 @@ class _ViewCustomizablePlans extends State<ViewCustomizablePlans> {
                                   height: 65,
                                   decoration: BoxDecoration(
                                     borderRadius: BorderRadius.circular(10),
-                                    image: const DecorationImage(
+                                    image:  DecorationImage(
                                       image:
-                                          const AssetImage("images/dummy.png"),
+                                          // const AssetImage("images/dummy.png"),
+                                          NetworkImage(_guide[0]['image']),
                                     ),
                                     color: Colors.grey.withOpacity(0.2),
                                   ),
@@ -93,8 +164,8 @@ class _ViewCustomizablePlans extends State<ViewCustomizablePlans> {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
-                                    const Text(
-                                      "Tishan De Silva",
+                                    Text(
+                                      _guide[0]['name'],
                                       style: TextStyle(
                                         fontWeight: FontWeight.bold,
                                         fontSize: 15,
@@ -109,7 +180,7 @@ class _ViewCustomizablePlans extends State<ViewCustomizablePlans> {
                                     ),
                                     const SizedBox(height: 2),
                                     Row(
-                                      children: const [
+                                      children:  [
                                         Icon(
                                           Icons.star,
                                           size: 18,
@@ -151,10 +222,10 @@ class _ViewCustomizablePlans extends State<ViewCustomizablePlans> {
                                 height: 40,
                                 child: Row(
                                   mainAxisAlignment: MainAxisAlignment.center,
-                                  children: const [
+                                  children: [
                                     Icon(Icons.money_rounded, size: 25),
                                     SizedBox(width: 5),
-                                    Text("LKR 75,894"),
+                                    Text('LKR ${formatter.format(_plan[0]['price'])}'),
                                   ],
                                 ),
                               ),
@@ -169,10 +240,10 @@ class _ViewCustomizablePlans extends State<ViewCustomizablePlans> {
                                 height: 40,
                                 child: Row(
                                   mainAxisAlignment: MainAxisAlignment.center,
-                                  children: const [
+                                  children: [
                                     Icon(Icons.people_outlined, size: 25),
                                     SizedBox(width: 5),
-                                    Text("4-10 Passengers"),
+                                    Text("${_plan[0]['max_travellers']} Passengers"),
                                   ],
                                 ),
                               ),
@@ -186,7 +257,7 @@ class _ViewCustomizablePlans extends State<ViewCustomizablePlans> {
                       height: 270,
                       child: PageView.builder(
                           scrollDirection: Axis.horizontal,
-                          itemCount: 4,
+                          itemCount: 3,
                           itemBuilder: (_, index) {
                             return Card(
                               elevation: 5,
@@ -202,8 +273,8 @@ class _ViewCustomizablePlans extends State<ViewCustomizablePlans> {
                                     Container(
                                       margin: const EdgeInsets.only(
                                           left: 20, top: 15),
-                                      child: const Text(
-                                        "Day 01",
+                                      child: Text(
+                                        days[index],
                                         style: TextStyle(
                                             fontWeight: FontWeight.bold,
                                             fontSize: 20),
@@ -298,7 +369,7 @@ class _ViewCustomizablePlans extends State<ViewCustomizablePlans> {
                                                 BorderRadius.circular(10),
                                             image: const DecorationImage(
                                               image: AssetImage(
-                                                  "images/google_maps.jpg"),
+                                                  "images/google_maps.jpeg"),
                                               fit: BoxFit.cover,
                                             ),
                                           ),
@@ -309,7 +380,7 @@ class _ViewCustomizablePlans extends State<ViewCustomizablePlans> {
                                     Row(
                                       mainAxisAlignment:
                                           MainAxisAlignment.center,
-                                      children: List.generate(4, (indexDots) {
+                                      children: List.generate(3, (indexDots) {
                                         return Container(
                                           margin: const EdgeInsets.only(
                                               bottom: 2, right: 5),
@@ -351,37 +422,7 @@ class _ViewCustomizablePlans extends State<ViewCustomizablePlans> {
                           }),
                     ),
                     const SizedBox(height: 16),
-                    Card(
-                      elevation: 5,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      child: Container(
-                        width: 230,
-                        height: 40,
-                        child: GestureDetector(
-                          onTap: () {
-                            
-                          },
-                          child: Container(
-                            padding: const EdgeInsets.only(top: 10, bottom: 10),
-                            decoration: BoxDecoration(
-                              color: Color(0xFF1554F6),
-                              borderRadius: BorderRadius.circular(10),
-                            ),
-                            child: Text(
-                              textAlign: TextAlign.center,
-                              "Customize the Tour",
-                              style: TextStyle(
-                                fontSize: 15,
-                                color: Colors.white,
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
+                    
                   ],
                 ),
               ),
