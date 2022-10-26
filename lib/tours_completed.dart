@@ -1,23 +1,36 @@
-//import 'dart:ffi';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 // import 'package:flutter/src/foundation/key.dart';
 // import 'package:flutter/src/widgets/framework.dart';
 import 'package:dio/dio.dart';
+import 'package:frontend/plan.dart';
 import 'package:frontend/tours.dart';
+import 'package:frontend/tours_booking.dart';
+import 'package:frontend/view_tour.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 
 
+
+
 class CompletedTours extends StatefulWidget {
-  const CompletedTours({Key? key}) : super(key: key);
+  String name, token;
+  CompletedTours(this.name, this.token);
+  //const BookingPlans({Key? key}) : super(key: key);
 
   @override
-  State<CompletedTours> createState() => _CompletedToursState();
+  State<CompletedTours> createState() 
+  {
+    return _CompletedToursState(this.name,this.token);
+  }
+ 
 }
-class Completed{
+
+
+
+
+class Booked{
    String cities;
    String image;
    double ratings;
@@ -25,37 +38,79 @@ class Completed{
    String startdate;
    String enddate;
 
-   Completed({required this.cities, required this.image, required this.ratings, required this.price, required this.startdate, required this.enddate});
+   Booked({required this.cities, required this.image, required this.ratings, required this.price, required this.startdate, required this.enddate});
 }
-class _CompletedToursState extends State<CompletedTours> {
-  bool loading = false; //for data featching status
 
-  List<Completed> completedTours = [
-   Completed(cities: "Hikkaduwa Sightseeing", image: "hikkaduwa.jpg", ratings: 4.2, price:88000.00, startdate: "20-06-2022", enddate: "25-06-2022"),
-   Completed(cities: "Hidden Paradise Meemure", image: "meemure.jpg", ratings: 4.8, price: 100000.00, startdate: "05-02-2022", enddate: "08-02-2022"),
-   //Completed(cities: "Pasikuda", image: "pasikuda.jpg", ratings: 4.0, price:120000.00, startdate: "20-08-2022", enddate: "27-08-2022"),
-   Completed(cities: "Beach Sinking", image: "Unawatuna.jpg", ratings: 4.5, price:110000.00, startdate: "15-10-2021", enddate: "17-10-2021"),
-   Completed(cities: "Sigiriya Lion Rock", image: "sigiriya.jpg", ratings: 3.8, price:85000.00, startdate: "22-04-2021", enddate: "26-04-2021"),
+class _CompletedToursState extends State<CompletedTours> {
+  String name, token;
+  _CompletedToursState(this.name, this.token);
+
+//for error status
+  late Response response;
+  Dio dio = Dio();
+  bool error = false; //for error status
+  bool loading = false; //for data featching status
+  String errmsg = ""; //to assing any error message from API/runtime
+  // var apidata; //for decoded JSON data
+  
+  List<Booked> CompletedTours = [
+   Booked(cities: "Hiking Over the Hill", image: "ella.jpg", ratings: 4.2, price:90000.00, startdate: "25-09-2022", enddate: "27-09-2022"),
+   Booked(cities: "Kitesurfing Adventure", image: "kalpitiya.jpg", ratings: 4.9, price:110000.00, startdate: "02-09-2022", enddate: "05-09-2022"),
+  //  Booked(cities: "Sigiriya", image: "sigiriya.jpg", ratings: 3.8, price:90000.00),
+  //  Booked(cities: "Meemure", image: "meemure.jpg", ratings: 4.8, price: 100000.00),
+  //  Booked(cities: "Hikkaduwa", image: "hikkaduwa.jpg", ratings: 4.2, price:88000.00),
+  //  Booked(cities: "Pasikuda", image: "pasikuda.jpg", ratings: 4.0, price:120000.00),
+   
    
 ];
-  // List Cities = ["Hikkaduwa", "Pasikuda", "Meemure", "Unawatuna"];
-  // List CitiesImg = ["hikkaduwa.jpg", "pasikuda.jpg", "meemure.jpg", "Unawatuna.jpg"];
-  
+List<dynamic> _plan= [];
+  List<dynamic> _book= [];
 
   getData() async { 
       setState(() {
          loading = true;  //make loading true to show progressindicator
       });
 
+
+String url = "https://gocore.herokuapp.com/completedPlan/$token";
+      //don't use "http://localhost/" use local IP or actual live URL
+
+      Response response = await dio.get(url); 
+      Map<String, dynamic> map = response.data;
+      _book = map["booked"];
+      _plan = map["plans1"];
+      print(map);
+      print(_plan);
+      
+      // _Tour = response.data; //get JSON decoded data from response
+     
+      // _allUsers= apidata;
+      if(response.statusCode == 200){
+          //fetch successful
+          // if(apidata["error"]){ //Check if there is error given on JSON
+          //     error = true; 
+          //     errmsg  = apidata["msg"]; //error message from JSON
+          // }
+      }else{ 
+          error = true;
+          errmsg = "Error while fetching data.";
+      }
+
       loading = false;
       setState(() {}); //refresh UI 
   }
-  var formatter = NumberFormat('###,###,###');
 
+@override
+  void initState() {
+    getData(); //fetching data
+    super.initState();
+  }
+
+  var formatter = NumberFormat('###,###,###');
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: 
+      body:
       loading? //printing the JSON recieved
                        Center(
                         child:SizedBox(
@@ -63,20 +118,19 @@ class _CompletedToursState extends State<CompletedTours> {
                          height: 30.0,
                          width: 30.0),
                        ):
-     
-      Container(
+       Container(
         // child: Padding(
         //   padding: const EdgeInsets.all(10),
           child: Column(
             children: [
               
               Expanded(
-                child: completedTours.isNotEmpty
+                child: CompletedTours.isNotEmpty
                     ? Padding(
                       padding: const EdgeInsets.fromLTRB(40, 10, 40, 10),
                       child: ListView.builder(
                         scrollDirection: Axis.vertical,
-                          itemCount: completedTours.length,
+                          itemCount: _plan.length,
                           itemBuilder: (context, index) => Card(
                             shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(15.0),
@@ -95,7 +149,7 @@ class _CompletedToursState extends State<CompletedTours> {
                                           padding: new EdgeInsets.all(5.0),
                                           // margin: EdgeInsets.only(right: 10.0),
                                           alignment: Alignment.topLeft,
-                                            child: Text(completedTours[index].cities, style: GoogleFonts.openSans(
+                                            child: Text(_plan[index]["planName"], style: GoogleFonts.openSans(
                                                         fontSize: 16.0,
                                                         fontWeight: FontWeight.w900,
                                                         color: Color(0xff1554F6)),),
@@ -108,14 +162,14 @@ class _CompletedToursState extends State<CompletedTours> {
                                                   color: Colors.amber,
                                                   size: 15,
                                                 ),
-                                                child: StarDisplay(value: completedTours[index].ratings.round()),
+                                                child: StarDisplay(value: _plan[index]["rating"].round()),
                                               ),
                                             ),
                                             Expanded(
                                           child: Container(
                                           padding: new EdgeInsets.all(5.0),
                                           alignment: Alignment.topRight,
-                                            child: Text(completedTours[index].ratings.toString(), style: GoogleFonts.openSans(
+                                            child: Text(_plan[index]["rating"].toString(), style: GoogleFonts.openSans(
                                                         fontSize: 14.0,
                                                         fontWeight: FontWeight.w700,
                                                         color: Color.fromARGB(255, 8, 8, 8)),),
@@ -135,7 +189,7 @@ class _CompletedToursState extends State<CompletedTours> {
                                           padding: new EdgeInsets.all(5.0),
                                           // margin: EdgeInsets.only(right: 10.0),
                                           alignment: Alignment.topLeft,
-                                            child: Text(completedTours[index].startdate, style: GoogleFonts.openSans(
+                                            child: Text(_book[index]["startDate"].toString().split('T')[0], style: GoogleFonts.openSans(
                                                         fontSize: 12.0,
                                                         //fontWeight: FontWeight.w900,
                                                         color: Color.fromARGB(255, 0, 0, 0)),),
@@ -145,7 +199,7 @@ class _CompletedToursState extends State<CompletedTours> {
                                           child: Container(
                                           padding: new EdgeInsets.all(5.0),
                                           alignment: Alignment.topRight,
-                                            child: Text(completedTours[index].enddate, style: GoogleFonts.openSans(
+                                            child: Text(_book[index]["endDate"].toString().split('T')[0], style: GoogleFonts.openSans(
                                                         fontSize: 12.0,
                                                         //fontWeight: FontWeight.w900,
                                                         color: Color.fromARGB(255, 0, 0, 0)),),
@@ -168,7 +222,7 @@ class _CompletedToursState extends State<CompletedTours> {
                                                 borderRadius: BorderRadius.circular(20),
                                                 image: DecorationImage(
                                                   fit: BoxFit.fill,
-                                                  image: AssetImage('images/' + completedTours[index].image),
+                                                  image: AssetImage('images/' + _plan[index]["img"]),
                                                 ),
                                               ),
                                             ),),
@@ -180,7 +234,7 @@ class _CompletedToursState extends State<CompletedTours> {
                                                   title: Padding(
                                                    
                                                     padding: const EdgeInsets.only(top:10,bottom: 10.0,left:10,right:5),
-                                          child: Text('LKR ${formatter.format(completedTours[index].price).toString() }' , style: GoogleFonts.openSans(
+                                          child: Text('LKR ${formatter.format(_plan[index]["price"]).toString() }' , style: GoogleFonts.openSans(
                                                         fontSize: 14.0,
                                                         fontWeight: FontWeight.w700,
                                                         color: Color.fromARGB(255, 8, 8, 8)),
@@ -200,7 +254,11 @@ class _CompletedToursState extends State<CompletedTours> {
                                                 borderRadius: BorderRadius.circular(16.0)),
                                                 
                                               ),
-                                            onPressed: () {},
+                                            onPressed: () {
+                                              Navigator.of(context).push(MaterialPageRoute(
+                                                  builder: (BuildContext context) =>
+                                                      ViewPlans(name,token,_plan[index]["planId"], _plan[index]["guideId"])));
+                                            },
                         ),),
                                             ),),
                                             ),),
@@ -209,7 +267,7 @@ class _CompletedToursState extends State<CompletedTours> {
                                     ), //your 2nd Row
                                   ],
                               ),
-                          decoration: BoxDecoration(
+                              decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(15),
                                 color: Colors.white,
                                 boxShadow: [
@@ -230,6 +288,6 @@ class _CompletedToursState extends State<CompletedTours> {
             ],
               ),
           ),
-    );
-  }
+  );
+ }
 }

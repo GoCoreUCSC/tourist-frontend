@@ -8,22 +8,22 @@ import 'package:frontend/main_page.dart';
 import 'package:dio/dio.dart';
 import 'package:intl/intl.dart';
 
-class BookingPlans extends StatefulWidget {
+class ViewPlans extends StatefulWidget {
   String name, token,plan, guide;
-  BookingPlans(this.name, this.token, this.plan, this.guide);
+  ViewPlans(this.name, this.token, this.plan, this.guide);
   //const BookingPlans({Key? key}) : super(key: key);
 
   @override
-  State<BookingPlans> createState() 
+  State<ViewPlans> createState() 
   {
-    return _BookingPlans(this.name,this.token, this.plan, this.guide);
+    return _ViewPlans(this.name,this.token, this.plan, this.guide);
   }
  
 }
 
-class _BookingPlans extends State<BookingPlans> {
+class _ViewPlans extends State<ViewPlans> {
   String name, token, plan, guide;
-  _BookingPlans(this.name, this.token, this.plan, this.guide);
+  _ViewPlans(this.name, this.token, this.plan, this.guide);
 
   late Response response;
   Dio dio = Dio();
@@ -44,7 +44,8 @@ class _BookingPlans extends State<BookingPlans> {
  
       String url = "https://gocore.herokuapp.com/viewplan/$plan/$guide";
       //don't use "http://localhost/" use local IP or actual live URL
-
+      print(plan);
+      print(guide);
       Response response = await dio.get(url); 
       Map<String, dynamic> map = response.data;
       _plan = map["plan"];
@@ -421,47 +422,7 @@ class _BookingPlans extends State<BookingPlans> {
                           }),
                     ),
                     const SizedBox(height: 16),
-                    Card(
-                      elevation: 5,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      child: Container(
-                        width: 220,
-                        height: 40,
-                        child: GestureDetector(
-                          onTap: () {
-                            Fluttertoast.showToast(
-                                  msg: 'Successfully Booked',
-                                  toastLength: Toast.LENGTH_SHORT,
-                                  gravity: ToastGravity.BOTTOM,
-                                  timeInSecForIosWeb: 1,
-                                  backgroundColor: Colors.green,
-                                  textColor:Colors.white,
-                                  fontSize:16.0);
-                            Navigator.of(context).push(MaterialPageRoute(
-                            builder: (BuildContext context) =>
-                                 MainPage(name,token)));
-                          },
-                          child: Container(
-                            padding: const EdgeInsets.only(top: 10, bottom: 10),
-                            decoration: BoxDecoration(
-                              color: Color(0xFF1554F6),
-                              borderRadius: BorderRadius.circular(10),
-                            ),
-                            child: Text(
-                              textAlign: TextAlign.center,
-                              "Book the Tour",
-                              style: TextStyle(
-                                fontSize: 15,
-                                color: Colors.white,
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
+                    
                   ],
                 ),
               ),

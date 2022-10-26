@@ -6,6 +6,7 @@ import 'package:frontend/explore_cabs.dart';
 import 'package:frontend/explore_hotels.dart';
 import 'package:frontend/explore_tours.dart';
 import 'package:frontend/tours_booked.dart';
+import 'package:frontend/tours_cancelled.dart';
 import 'package:frontend/tours_completed.dart';
 import 'package:frontend/tours_ongoing.dart';
 
@@ -38,7 +39,7 @@ class _BookingPageState extends State<BookingPage>
 
   @override
   Widget build(BuildContext context) {
-    TabController _tabController = TabController(length: 3, vsync: this);
+    TabController _tabController = TabController(length: 4, vsync: this);
     return Scaffold(
       // appBar: AppBar(
       //     // leading: GestureDetector(
@@ -105,6 +106,7 @@ class _BookingPageState extends State<BookingPage>
               tabs: const [
                 Tab(text: "Ongoing"),
                 Tab(text: "Booked"),
+                Tab(text: "Cancelled"),
                 Tab(text: "Completed"),
               ],
             ),
@@ -117,9 +119,10 @@ class _BookingPageState extends State<BookingPage>
           child: TabBarView(
             controller: _tabController,
             children: [
-              OngoingTours(),
+              OngoingTours(name,token),
               BookedTours(name,token),
-              CompletedTours(),
+              CancelledTours(name,token),
+              CompletedTours(name,token),
             ],
           ),
         ),

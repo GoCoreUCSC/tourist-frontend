@@ -14,15 +14,15 @@ import 'package:intl/intl.dart';
 
 
 
-class BookedTours extends StatefulWidget {
+class CancelledTours extends StatefulWidget {
   String name, token;
-  BookedTours(this.name, this.token);
+  CancelledTours(this.name, this.token);
   //const BookingPlans({Key? key}) : super(key: key);
 
   @override
-  State<BookedTours> createState() 
+  State<CancelledTours> createState() 
   {
-    return _BookedToursState(this.name,this.token);
+    return _CancelledToursState(this.name,this.token);
   }
  
 }
@@ -41,9 +41,9 @@ class Booked{
    Booked({required this.cities, required this.image, required this.ratings, required this.price, required this.startdate, required this.enddate});
 }
 
-class _BookedToursState extends State<BookedTours> {
+class _CancelledToursState extends State<CancelledTours> {
   String name, token;
-  _BookedToursState(this.name, this.token);
+  _CancelledToursState(this.name, this.token);
 
 //for error status
   late Response response;
@@ -53,7 +53,7 @@ class _BookedToursState extends State<BookedTours> {
   String errmsg = ""; //to assing any error message from API/runtime
   // var apidata; //for decoded JSON data
   
-  List<Booked> bookedTours = [
+  List<Booked> CancelledTours = [
    Booked(cities: "Hiking Over the Hill", image: "ella.jpg", ratings: 4.2, price:90000.00, startdate: "25-09-2022", enddate: "27-09-2022"),
    Booked(cities: "Kitesurfing Adventure", image: "kalpitiya.jpg", ratings: 4.9, price:110000.00, startdate: "02-09-2022", enddate: "05-09-2022"),
   //  Booked(cities: "Sigiriya", image: "sigiriya.jpg", ratings: 3.8, price:90000.00),
@@ -72,7 +72,7 @@ List<dynamic> _plan= [];
       });
 
 
-String url = "https://gocore.herokuapp.com/bookedPlan/$token";
+String url = "https://gocore.herokuapp.com/cancelledPlan/$token";
       //don't use "http://localhost/" use local IP or actual live URL
 
       Response response = await dio.get(url); 
@@ -125,7 +125,7 @@ String url = "https://gocore.herokuapp.com/bookedPlan/$token";
             children: [
               
               Expanded(
-                child: bookedTours.isNotEmpty
+                child: CancelledTours.isNotEmpty
                     ? Padding(
                       padding: const EdgeInsets.fromLTRB(40, 10, 40, 10),
                       child: ListView.builder(

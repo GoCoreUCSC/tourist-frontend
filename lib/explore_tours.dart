@@ -4,17 +4,41 @@ import 'package:flutter/rendering.dart';
 // import 'package:flutter/src/foundation/key.dart';
 // import 'package:flutter/src/widgets/framework.dart';
 import 'package:dio/dio.dart';
+import 'package:frontend/view_tour.dart';
 import 'package:intl/intl.dart';
 
 
 class ExploreTours extends StatefulWidget {
-  const ExploreTours({Key? key}) : super(key: key);
+  String name, token;
+   ExploreTours(this.name, this.token);
 
   @override
-  State<ExploreTours> createState() => _ExploreToursState();
+  State<ExploreTours> createState() {
+    return _ExploreToursState(this.name ,this.token);
+  }
+ 
+}
+class StarDisplay extends StatelessWidget {
+  final int value;
+  const StarDisplay({Key? key, this.value = 0})
+      : assert(value != null),
+        super(key: key);
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: List.generate(5, (index) {
+        return Icon(
+          index < value ? Icons.star : Icons.star_border,
+        );
+      }),
+    );
+  }
 }
 
 class _ExploreToursState extends State<ExploreTours> {
+String name, token;
+  _ExploreToursState(this.name, this.token);
 
 late Response response;
   Dio dio = Dio();
@@ -32,7 +56,7 @@ late Response response;
          loading = true;  //make loading true to show progressindicator
       });
 
-      String url = "https://gocore.herokuapp.com/viewplans";
+      String url = "https://gocore.herokuapp.com/viewTourplan";
       //don't use "http://localhost/" use local IP or actual live URL
 
       Response response = await dio.get(url); 
@@ -59,146 +83,354 @@ late Response response;
     super.initState();
   }
 
-void _runFilter(String enteredKeyword) {
-    List<dynamic> results = [];
-    if (enteredKeyword.isEmpty) {
-      // if the search field is empty or only contains white-space, we'll display all users
-      results = _allTours;
-      // print(_allUsers);
-    } else {
-      results = _allTours
-          .where((user) =>
-              user["place"].toLowerCase().contains(enteredKeyword.toLowerCase()))
-          .toList();
-      // we use the toLowerCase() method to make it case-insensitive
-    }
+// void _runFilter(String enteredKeyword) {
+//     List<dynamic> results = [];
+//     if (enteredKeyword.isEmpty) {
+//       // if the search field is empty or only contains white-space, we'll display all users
+//       results = _allTours;
+//       // print(_allUsers);
+//     } else {
+//       results = _allTours
+//           .where((user) =>
+//               user["place"].toLowerCase().contains(enteredKeyword.toLowerCase()))
+//           .toList();
+//       // we use the toLowerCase() method to make it case-insensitive
+//     }
 
-    // Refresh the UI
-    setState(() {
-      _foundTours = results;
-    });
-  } 
+//     // Refresh the UI
+//     setState(() {
+//       _foundTours = results;
+//     });
+//   } 
   var formatter = NumberFormat('###,###,###');
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body:
-      loading? //printing the JSON recieved
-                       Center(
-                        child:SizedBox(
-                          child:CircularProgressIndicator(valueColor:AlwaysStoppedAnimation<Color>(Color(0xffF67715))),             
-                         height: 30.0,
-                         width: 30.0),
-                       ):
-      ListView.builder(
-        itemCount: _foundTours.length,
-        scrollDirection: Axis.vertical,
-        itemBuilder: (BuildContext context, int index) => 
-        InkWell(
-          onTap: () => null,
-          child:Container(
-          padding: EdgeInsets.only(left: 20.0, right: 20),
-          child: Card(
-            margin: EdgeInsets.only(bottom: 20),
-            elevation: 10.0,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(20),
-            ),
-            child: Container(
-              width: 360,
-              decoration: BoxDecoration(
-                color: Color.fromARGB(255, 255, 255, 255),
-                borderRadius: BorderRadius.circular(20),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.grey.withOpacity(0.3),
-                    offset: Offset(-10.0, 10.0),
-                    blurRadius: 20.0,
-                    spreadRadius: 4.0,
+       loading
+          ? //printing the JSON recieved
+          Center(
+              child: SizedBox(
+                  child: CircularProgressIndicator(
+                      valueColor:
+                          AlwaysStoppedAnimation<Color>(Color(0xffF67715))),
+                  height: 30.0,
+                  width: 30.0),
+            )
+          : Container(
+              // child: Padding(
+              //   padding: const EdgeInsets.all(10),
+              child: Column(
+                children: [
+                  Expanded(
+                    child: _allTours.isNotEmpty
+                        ? Padding(
+                            padding: const EdgeInsets.fromLTRB(30, 10, 30, 10),
+                            child: ListView.builder(
+                              itemCount: _allTours.length,
+                              itemBuilder: (context, index) => Card(
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(15.0),
+                                  // side: BorderSide(color: Color(0xff1554F6), width: 2),
+                                ),
+                                child: Container(
+                                  padding: new EdgeInsets.all(12.0),
+                                  height: 270,
+                                  child: ListView(
+                                    children: [
+                                      Row(
+                                        children: [
+                                          Expanded(
+                                            flex: 5,
+                                            child: Container(
+                                              padding: new EdgeInsets.all(5.0),
+                                              // margin: EdgeInsets.only(right: 10.0),
+                                              alignment: Alignment.topLeft,
+                                              child: Text(
+                                                _allTours[index]['planName'],
+                                                style: TextStyle(
+                                                    fontSize: 16.0,
+                                                    fontWeight: FontWeight.w900,
+                                                    color: Color(0xff1554F6)),
+                                              ),
+                                            ),
+                                          ),
+                                          Container(
+                                            alignment: Alignment.topRight,
+                                            child: IconTheme(
+                                              data: IconThemeData(
+                                                color: Colors.amber,
+                                                size: 15,
+                                              ),
+                                              child: StarDisplay(
+                                                  value: _allTours[index]
+                                                          ['rating']
+                                                      .round()),
+                                            ),
+                                          ),
+                                          Expanded(
+                                            child: Container(
+                                              padding: new EdgeInsets.all(5.0),
+                                              alignment: Alignment.topRight,
+                                              child: Text(
+                                                _allTours[index]['rating']
+                                                    .toString(),
+                                                style: TextStyle(
+                                                    fontSize: 14.0,
+                                                    fontWeight: FontWeight.w700,
+                                                    color: Color.fromARGB(
+                                                        255, 8, 8, 8)),
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      ), //your 1st Row
+                                      Divider(
+                                        thickness: 2,
+                                      ),
+                                      Row(
+                                        children: [
+                                          Padding(
+                                            padding:
+                                                const EdgeInsets.only(top: 8.0),
+                                            child: Container(
+                                              width: 150,
+                                              height: 115,
+                                              decoration: BoxDecoration(
+                                                borderRadius:
+                                                    BorderRadius.circular(20),
+                                                image: DecorationImage(
+                                                  fit: BoxFit.fill,
+                                                  image: AssetImage('images/' +
+                                                      _allTours[index]['img']),
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                          Container(
+                                            child: Expanded(
+                                              child: Container(
+                                                child: ListTile(
+                                                  title: Padding(
+                                                    padding:
+                                                        const EdgeInsets.only(
+                                                            top: 10,
+                                                            bottom: 10.0,
+                                                            left: 20,
+                                                            right: 5),
+                                                    child: Text(
+                                                        'LKR ${formatter.format(_allTours[index]['price']).toString()}',
+                                                        style: TextStyle(
+                                                            fontSize: 14.0,
+                                                            fontWeight:
+                                                                FontWeight.w700,
+                                                            color:
+                                                                Color.fromARGB(
+                                                                    255,
+                                                                    8,
+                                                                    8,
+                                                                    8)),
+                                                        textAlign:
+                                                            TextAlign.right),
+                                                  ),
+                                                  subtitle: Padding(
+                                                    padding:
+                                                        const EdgeInsets.only(
+                                                            top: 20.0,
+                                                            left: 17),
+                                                    child: TextButton(
+                                                      child: Text("View Plan",
+                                                          style: TextStyle(
+                                                              fontSize: 12),
+                                                          textAlign:
+                                                              TextAlign.right),
+                                                      style:
+                                                          TextButton.styleFrom(
+                                                        primary: Colors
+                                                            .white, //Text Color
+                                                        backgroundColor:
+                                                            Color(0xff1554F6),
+                                                        shape: RoundedRectangleBorder(
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .circular(
+                                                                        16.0)),
+                                                      ),
+                                                      onPressed: () {
+                                                        Navigator.push(
+                                                            context,
+                                                            MaterialPageRoute(
+                                                                builder: (context) =>
+                                                                    ViewPlans(name, token,_allTours[index]['planId'], _allTours[index]['guideId'])));
+                                                      },
+                                                    ),
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      ), //your 2nd Row
+
+                                    SizedBox(
+                                      width: 20,
+                    height: 20,
                   ),
-                ],
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Container(
-                        width: 150,
-                        height: 150,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(20),
-                          image: DecorationImage(
-                            fit: BoxFit.fill,
-                            image: AssetImage('images/' + _foundTours[index]['img']),
-                          ),
-                        ),
-                        
-                      ),
-                      SizedBox(width: 20, height: 20,),
-                      SingleChildScrollView(
-                        padding: EdgeInsets.only(top: 15),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Padding(
-                              padding: const EdgeInsets.only(top:10.0),
-                              child: Text(
-                                 _foundTours[index]['destination'],
-                                style: const TextStyle(
-                                    color: Colors.black,
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.bold),
-                              ),
-                            ),
-                            SizedBox(height: 15),
-                            Container(
-                              width: 200,
-                              child: 
-                              RichText(
-                              text: TextSpan(
-                                children: [
-                                  WidgetSpan(
-                                    child: Icon(Icons.star, size: 21,color: Colors.amber,),
+                                      Row(
+                                        
+                                        crossAxisAlignment: CrossAxisAlignment.center,
+                                        children: [
+                                          // Padding(
+                                          //  padding: const EdgeInsets.only(top: 8.0),
+                                          
+                                          Column(
+                                            children: [
+                                              // width: 150,
+                                              // height: 115,
+                                              Container(
+                                                child: Padding(
+                                                  padding: const EdgeInsets.only(
+                                                      top: 10,
+                                                      bottom: 10.0,
+                                                      left: 5,
+                                                      right: 5),
+                                                  child: Text(
+                                                    '${formatter.format(_allTours[index]['duration']).toString()} days',
+                                                    style: TextStyle(
+                                                            fontSize: 14.0,
+                                                            fontWeight:
+                                                                FontWeight.w700,
+                                                            color:
+                                                                Color.fromARGB(
+                                                                    255,
+                                                                    8,
+                                                                    8,
+                                                                    8)),
+                                                        textAlign:
+                                                            TextAlign.center
+                                                  ),
+                                                ),
+                                                decoration: BoxDecoration(
+                                                  color: Color.fromARGB(179, 234, 242, 255),
+                                                  // border: Border.all(
+                                                  //   width: 1,
+                                                  // ),
+                                                  borderRadius: BorderRadius.circular(12),
+                                              ),
+                                              ),
+                                            ],
+                                          ),
+                                          SizedBox(
+                    width: 20,
+                  ),
+                                          Column(
+                                            children: [
+                                              // width: 150,
+                                              // height: 115,
+                                              Container(
+                                                child: Padding(
+                                                    padding:
+                                                        const EdgeInsets.only(
+                                                            top: 10,
+                                                            bottom: 10.0,
+                                                            left: 5,
+                                                            right: 5),
+                                                    
+                                                    child: Text(
+                                                      'Max Travellers ${formatter.format(_allTours[index]['max_travellers']).toString()}',
+                                                      style: TextStyle(
+                                                            fontSize: 14.0,
+                                                            fontWeight:
+                                                                FontWeight.w700,
+                                                            color:
+                                                                Color.fromARGB(
+                                                                    255,
+                                                                    8,
+                                                                    8,
+                                                                    8)),
+                                                        textAlign:
+                                                            TextAlign.center
+                                                    ),
+                                                    ),
+                                                decoration: BoxDecoration(
+                                                  color: Color.fromARGB(179, 234, 242, 255),
+                                                  // border: Border.all(
+                                                  //   width: 1,
+                                                  // ),
+                                                  borderRadius: BorderRadius.circular(12),
+                                              ),
+                                              ),
+                                            ],
+                                          ),
+
+                                          SizedBox(
+                    width: 20,
+                  ),
+                                          Column(
+                                            children: [
+                                              // width: 150,
+                                              // height: 115,
+                                              Container(
+                                                child: Padding(
+                                                  padding: const EdgeInsets.only(
+                                                      top: 10,
+                                                      bottom: 10.0,
+                                                      left: 5,
+                                                      right: 5),
+                                                  child: Text(
+                                                    _allTours[index]
+                                                        ['payment_method'] + 'Payments',
+                                                    style: TextStyle(
+                                                            fontSize: 14.0,
+                                                            fontWeight:
+                                                                FontWeight.w700,
+                                                            color:
+                                                                Color.fromARGB(
+                                                                    255,
+                                                                    8,
+                                                                    8,
+                                                                    8)),
+                                                        textAlign:
+                                                            TextAlign.center
+                                                  ),
+                                                ),
+                                              decoration: BoxDecoration(
+                                                  color: Color.fromARGB(179, 234, 242, 255),
+                                                  // border: Border.all(
+                                                  //   width: 1,
+                                                  // ),
+                                                  borderRadius: BorderRadius.circular(12),
+                                              ),
+                                              ),
+                                            ],
+                                          ),
+                                        ],
+                                      ), //3rd row
+                                    ],
                                   ),
-                                  TextSpan(
-                                    text: '' +  _foundTours[index]['rating'].toString() ,
-                                    style: const TextStyle(
-                                      color: Colors.black,
-                                      fontSize: 14.0,
-                                  ),
-                                  ),
-                                ],
-                              ),
-                            )    
-                              ),
-                              SizedBox(height: 10),
-                            Container(
-                              width: 200,
-                              child: Text(
-                                'LKR ${formatter.format(_foundTours[index]['price']).toString() }',
-                                style: const TextStyle(
-                                  color: Colors.black,
-                                  fontSize: 14.0,
-                                  fontWeight: FontWeight.bold
+                                  decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(15),
+                                      color: Colors.white,
+                                      boxShadow: [
+                                        BoxShadow(
+                                          color:
+                                              Color.fromARGB(96, 112, 112, 112),
+                                          blurRadius: 10,
+                                          offset: Offset(0, 5),
+                                        ),
+                                      ]),
                                 ),
                               ),
-                            ),
-                            ],
-                              ),
-                            ),
-                    ],
+                            ))
+                        : const Text(
+                            'No results found',
+                            style: TextStyle(fontSize: 14),
+                          ),
                   ),
                 ],
               ),
             ),
-          ),
-        ),
-      ),
-    ),
-  );
- }
+    );
+    }
 }

@@ -1,3 +1,4 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/foundation/key.dart';
 import 'package:flutter/src/widgets/framework.dart';
@@ -18,7 +19,48 @@ class ProfilePage extends StatefulWidget {
 
 class _ProfilePageState extends State<ProfilePage> {
   String name, token;
+   late Response response;
+  Dio dio = Dio();
+
+  bool error = false; //for error status
+  bool loading = false; //for data featching status
+  String errmsg = "";
   _ProfilePageState(this.name,this.token);
+  List<dynamic> _Users= [];
+
+getData() async { 
+      setState(() {
+         loading = true;  //make loading true to show progressindicator
+      });
+
+      String url = "https://gocore.herokuapp.com/user/$token";
+      //don't use "http://localhost/" use local IP or actual live URL
+
+      Response response = await dio.get(url); 
+      _Users = response.data; //get JSON decoded data from response
+       
+      // _allUsers= apidata;
+      if(response.statusCode == 200){
+          //fetch successful
+          // if(apidata["error"]){ //Check if there is error given on JSON
+          //     error = true; 
+          //     errmsg  = apidata["msg"]; //error message from JSON
+          // }
+      }else{ 
+          error = true;
+          errmsg = "Error while fetching data.";
+      }
+
+      loading = false;
+      setState(() {}); //refresh UI 
+  }
+
+  @override
+  void initState() {
+    getData(); //fetching data
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -73,8 +115,9 @@ class _ProfilePageState extends State<ProfilePage> {
                     width: 100,
                     height: 100,
                     decoration: BoxDecoration(
-                      image: const DecorationImage(
-                        image: AssetImage("images/dummy.png"),
+                      image: DecorationImage(
+                        // image: NetworkImage(_Users[0]['image']),
+                        image: AssetImage("images/image.jpeg"),
                       ),
                       
                       borderRadius: BorderRadius.circular(100),
@@ -132,7 +175,7 @@ class _ProfilePageState extends State<ProfilePage> {
             Container(
               margin: const EdgeInsets.only(left: 20, right: 20),
               width: double.maxFinite,
-              height: 260,
+              height: 200,
               decoration: BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.circular(10),
@@ -272,69 +315,8 @@ class _ProfilePageState extends State<ProfilePage> {
                       ],
                     ),
                   ),
-                  const SizedBox(height: 15),
-                  Container(
-                    width: double.maxFinite,
-                    height: 50,
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.end,
-                      children: [
-                        Container(
-                          margin: const EdgeInsets.only(
-                              left: 10, bottom: 15, top: 10),
-                          width: 50,
-                          height: 50,
-                          child: const Icon(
-                            Icons.system_security_update_good_outlined,
-                            size: 40,
-                            color: Color(0xFF1554F6),
-                          ),
-                        ),
-                        const SizedBox(width: 7),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Container(
-                              margin: const EdgeInsets.only(top: 10),
-                              child: const Text(
-                                "Two-Factor Authentication",
-                                style: TextStyle(
-                                  fontSize: 15,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.black,
-                                ),
-                              ),
-                            ),
-                            const SizedBox(height: 2),
-                            const Text(
-                              "Further secure your account for safety",
-                              style: TextStyle(
-                                fontSize: 15.0,
-                                color: Colors.grey,
-                              ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(width: 21),
-                        Container(
-                          padding: const EdgeInsets.only(bottom: 13),
-                          child: GestureDetector(
-                            onTap: () {
-                              // Navigator.of(context).push(MaterialPageRoute(
-                              //     builder: (BuildContext context) =>
-                              //         const EditProfile()));
-                            },
-                            child: const Icon(
-                              Icons.arrow_forward_ios,
-                              size: 17,
-                              color: Colors.grey,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
+                  
+                  
                   const SizedBox(height: 15),
                   Container(
                     width: double.maxFinite,

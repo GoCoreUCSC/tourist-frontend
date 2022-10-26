@@ -4,20 +4,33 @@ import 'package:flutter/rendering.dart';
 // import 'package:flutter/src/foundation/key.dart';
 // import 'package:flutter/src/widgets/framework.dart';
 import 'package:dio/dio.dart';
+import 'package:frontend/plan.dart';
 import 'package:frontend/tours.dart';
+import 'package:frontend/tours_booking.dart';
+import 'package:frontend/view_tour.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 
 
 
+
 class OngoingTours extends StatefulWidget {
-  const OngoingTours({Key? key}) : super(key: key);
+  String name, token;
+  OngoingTours(this.name, this.token);
+  //const BookingPlans({Key? key}) : super(key: key);
 
   @override
-  State<OngoingTours> createState() => _OngoingToursState();
+  State<OngoingTours> createState() 
+  {
+    return _OngoingToursState(this.name,this.token);
+  }
+ 
 }
 
-class Ongoing{
+
+
+
+class Booked{
    String cities;
    String image;
    double ratings;
@@ -25,38 +38,79 @@ class Ongoing{
    String startdate;
    String enddate;
 
-   Ongoing({required this.cities, required this.image, required this.ratings, required this.price, required this.startdate, required this.enddate});
+   Booked({required this.cities, required this.image, required this.ratings, required this.price, required this.startdate, required this.enddate});
 }
 
 class _OngoingToursState extends State<OngoingTours> {
+  String name, token;
+  _OngoingToursState(this.name, this.token);
 
 //for error status
+  late Response response;
+  Dio dio = Dio();
+  bool error = false; //for error status
   bool loading = false; //for data featching status
+  String errmsg = ""; //to assing any error message from API/runtime
+  // var apidata; //for decoded JSON data
   
-  
-  List<Ongoing> ongoingTours = [
-   Ongoing(cities: "Sparkling Blue Waters", image: "pasikuda.jpg", ratings: 4.0, price:120000.00, startdate: "21-08-2022", enddate: "27-08-2022"),
-  //  Ongoing(cities: "Kandy", image: "Kandy.jpg", ratings: 4.4, price: 85000.00),
-  //  Ongoing(cities: "Hikkaduwa", image: "hikkaduwa.jpg", ratings: 4.2, price:88000.00),
-  //  Ongoing(cities: "Unawatuna", image: "Unawatuna.jpg", ratings: 4.5, price:110000.00),
-  //  Ongoing(cities: "Sigiriya", image: "sigiriya.jpg", ratings: 3.8, price:90000.00),
+  List<Booked> bookedTours = [
+   Booked(cities: "Hiking Over the Hill", image: "ella.jpg", ratings: 4.2, price:90000.00, startdate: "25-09-2022", enddate: "27-09-2022"),
+   Booked(cities: "Kitesurfing Adventure", image: "kalpitiya.jpg", ratings: 4.9, price:110000.00, startdate: "02-09-2022", enddate: "05-09-2022"),
+  //  Booked(cities: "Sigiriya", image: "sigiriya.jpg", ratings: 3.8, price:90000.00),
+  //  Booked(cities: "Meemure", image: "meemure.jpg", ratings: 4.8, price: 100000.00),
+  //  Booked(cities: "Hikkaduwa", image: "hikkaduwa.jpg", ratings: 4.2, price:88000.00),
+  //  Booked(cities: "Pasikuda", image: "pasikuda.jpg", ratings: 4.0, price:120000.00),
+   
    
 ];
+List<dynamic> _plan= [];
+  List<dynamic> _book= [];
 
   getData() async { 
       setState(() {
          loading = true;  //make loading true to show progressindicator
       });
 
+
+String url = "https://gocore.herokuapp.com/ongoingPlan/$token";
+      //don't use "http://localhost/" use local IP or actual live URL
+
+      Response response = await dio.get(url); 
+      Map<String, dynamic> map = response.data;
+      _book = map["booked"];
+      _plan = map["plans1"];
+      print(map);
+      print(_plan);
+      
+      // _Tour = response.data; //get JSON decoded data from response
+     
+      // _allUsers= apidata;
+      if(response.statusCode == 200){
+          //fetch successful
+          // if(apidata["error"]){ //Check if there is error given on JSON
+          //     error = true; 
+          //     errmsg  = apidata["msg"]; //error message from JSON
+          // }
+      }else{ 
+          error = true;
+          errmsg = "Error while fetching data.";
+      }
+
       loading = false;
       setState(() {}); //refresh UI 
   }
-  var formatter = NumberFormat('###,###,###');
 
+@override
+  void initState() {
+    getData(); //fetching data
+    super.initState();
+  }
+
+  var formatter = NumberFormat('###,###,###');
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: 
+      body:
       loading? //printing the JSON recieved
                        Center(
                         child:SizedBox(
@@ -64,19 +118,19 @@ class _OngoingToursState extends State<OngoingTours> {
                          height: 30.0,
                          width: 30.0),
                        ):
-      Container(
+       Container(
         // child: Padding(
         //   padding: const EdgeInsets.all(10),
           child: Column(
             children: [
               
               Expanded(
-                child: ongoingTours.isNotEmpty
+                child: bookedTours.isNotEmpty
                     ? Padding(
                       padding: const EdgeInsets.fromLTRB(40, 10, 40, 10),
                       child: ListView.builder(
                         scrollDirection: Axis.vertical,
-                          itemCount: ongoingTours.length,
+                          itemCount: _plan.length,
                           itemBuilder: (context, index) => Card(
                             shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(15.0),
@@ -95,7 +149,7 @@ class _OngoingToursState extends State<OngoingTours> {
                                           padding: new EdgeInsets.all(5.0),
                                           // margin: EdgeInsets.only(right: 10.0),
                                           alignment: Alignment.topLeft,
-                                            child: Text(ongoingTours[index].cities, style: GoogleFonts.openSans(
+                                            child: Text(_plan[index]["planName"], style: GoogleFonts.openSans(
                                                         fontSize: 16.0,
                                                         fontWeight: FontWeight.w900,
                                                         color: Color(0xff1554F6)),),
@@ -108,14 +162,14 @@ class _OngoingToursState extends State<OngoingTours> {
                                                   color: Colors.amber,
                                                   size: 15,
                                                 ),
-                                                child: StarDisplay(value: ongoingTours[index].ratings.round()),
+                                                child: StarDisplay(value: _plan[index]["rating"].round()),
                                               ),
                                             ),
                                             Expanded(
                                           child: Container(
                                           padding: new EdgeInsets.all(5.0),
                                           alignment: Alignment.topRight,
-                                            child: Text(ongoingTours[index].ratings.toString(), style: GoogleFonts.openSans(
+                                            child: Text(_plan[index]["rating"].toString(), style: GoogleFonts.openSans(
                                                         fontSize: 14.0,
                                                         fontWeight: FontWeight.w700,
                                                         color: Color.fromARGB(255, 8, 8, 8)),),
@@ -125,9 +179,8 @@ class _OngoingToursState extends State<OngoingTours> {
                                          
                                           ],
                                     ), //your 1st Row
-
                                     Divider(thickness: 2,),
-                                    
+
                                     Row(
                                        children: [
                                             Expanded(
@@ -136,7 +189,7 @@ class _OngoingToursState extends State<OngoingTours> {
                                           padding: new EdgeInsets.all(5.0),
                                           // margin: EdgeInsets.only(right: 10.0),
                                           alignment: Alignment.topLeft,
-                                            child: Text(ongoingTours[index].startdate, style: GoogleFonts.openSans(
+                                            child: Text(_book[index]["startDate"].toString().split('T')[0], style: GoogleFonts.openSans(
                                                         fontSize: 12.0,
                                                         //fontWeight: FontWeight.w900,
                                                         color: Color.fromARGB(255, 0, 0, 0)),),
@@ -146,7 +199,7 @@ class _OngoingToursState extends State<OngoingTours> {
                                           child: Container(
                                           padding: new EdgeInsets.all(5.0),
                                           alignment: Alignment.topRight,
-                                            child: Text(ongoingTours[index].enddate, style: GoogleFonts.openSans(
+                                            child: Text(_book[index]["endDate"].toString().split('T')[0], style: GoogleFonts.openSans(
                                                         fontSize: 12.0,
                                                         //fontWeight: FontWeight.w900,
                                                         color: Color.fromARGB(255, 0, 0, 0)),),
@@ -157,7 +210,6 @@ class _OngoingToursState extends State<OngoingTours> {
                                           ],
                                     ), //your 2nd Row
                                     Divider(thickness: 2,),
-
 
                                     Row(
                                       children: [
@@ -170,7 +222,7 @@ class _OngoingToursState extends State<OngoingTours> {
                                                 borderRadius: BorderRadius.circular(20),
                                                 image: DecorationImage(
                                                   fit: BoxFit.fill,
-                                                  image: AssetImage('images/' + ongoingTours[index].image),
+                                                  image: AssetImage('images/' + _plan[index]["img"]),
                                                 ),
                                               ),
                                             ),),
@@ -182,7 +234,7 @@ class _OngoingToursState extends State<OngoingTours> {
                                                   title: Padding(
                                                    
                                                     padding: const EdgeInsets.only(top:10,bottom: 10.0,left:10,right:5),
-                                          child: Text('LKR ${formatter.format(ongoingTours[index].price).toString() }' , style: GoogleFonts.openSans(
+                                          child: Text('LKR ${formatter.format(_plan[index]["price"]).toString() }' , style: GoogleFonts.openSans(
                                                         fontSize: 14.0,
                                                         fontWeight: FontWeight.w700,
                                                         color: Color.fromARGB(255, 8, 8, 8)),
@@ -202,7 +254,11 @@ class _OngoingToursState extends State<OngoingTours> {
                                                 borderRadius: BorderRadius.circular(16.0)),
                                                 
                                               ),
-                                            onPressed: () {},
+                                            onPressed: () {
+                                              Navigator.of(context).push(MaterialPageRoute(
+                                                  builder: (BuildContext context) =>
+                                                      ViewPlans(name,token,_plan[index]["planId"], _plan[index]["guideId"]) ));
+                                            },
                         ),),
                                             ),),
                                             ),),
@@ -232,6 +288,6 @@ class _OngoingToursState extends State<OngoingTours> {
             ],
               ),
           ),
-    );
-  }
+  );
+ }
 }

@@ -1,3 +1,4 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/foundation/key.dart';
 import 'package:flutter/src/widgets/framework.dart';
@@ -16,7 +17,47 @@ class EditProfile extends StatefulWidget {
 
 class _EditProfileState extends State<EditProfile> {
   String name,token;
+  late Response response;
+  Dio dio = Dio();
+
+  bool error = false; //for error status
+  bool loading = false; //for data featching status
+  String errmsg = "";
   _EditProfileState(this.name,this.token);
+List<dynamic> _Users= [];
+
+getData() async { 
+      setState(() {
+         loading = true;  //make loading true to show progressindicator
+      });
+
+      String url = "https://gocore.herokuapp.com/user/$token";
+      //don't use "http://localhost/" use local IP or actual live URL
+
+      Response response = await dio.get(url); 
+      _Users = response.data; //get JSON decoded data from response
+       
+      // _allUsers= apidata;
+      if(response.statusCode == 200){
+          //fetch successful
+          // if(apidata["error"]){ //Check if there is error given on JSON
+          //     error = true; 
+          //     errmsg  = apidata["msg"]; //error message from JSON
+          // }
+      }else{ 
+          error = true;
+          errmsg = "Error while fetching data.";
+      }
+
+      loading = false;
+      setState(() {}); //refresh UI 
+  }
+
+  @override
+  void initState() {
+    getData(); //fetching data
+    super.initState();
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -38,13 +79,14 @@ class _EditProfileState extends State<EditProfile> {
         
         child: ListView(
           children: [
+            const SizedBox(height: 40),
             Container(
               width: 120,
               height: 120,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                image: const DecorationImage(
-                  image: AssetImage("images/dummy.png"),
+                image:  DecorationImage(
+                  image: NetworkImage(_Users[0]['image']),
                 ),
                 color: Colors.grey.withOpacity(0.1),
               ),
