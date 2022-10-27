@@ -288,11 +288,12 @@ class _ToursState extends State<Tours> {
                                                                         16.0)),
                                                       ),
                                                       onPressed: () {
-                                                        Navigator.push(
-                                                            context,
-                                                            MaterialPageRoute(
-                                                                builder: (context) =>
-                                                                    ViewCustomizablePlans()));
+                                                      //   onPressed: () {
+                                              Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                builder: (context) => BookingPlans(name,token,_allTours[index]['planId'], _allTours[index]['guideId'])));  
+                                            
                                                       },
                                                     ),
                                                   ),

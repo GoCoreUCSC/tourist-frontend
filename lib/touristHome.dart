@@ -29,6 +29,12 @@ class TouristHome extends StatefulWidget {
 
 class _TouristHomeState extends State<TouristHome> {
   String name, token;
+  late Response response;
+  Dio dio = Dio();
+
+  bool error = false; //for error status
+  bool loading = false; //for data featching status
+  String errmsg = "";
   // String name;
     late Response response;
   Dio dio = Dio();
@@ -39,11 +45,11 @@ class _TouristHomeState extends State<TouristHome> {
   // var apidata; //for decoded JSON data
    _TouristHomeState(this.name,this.token);
   List activities = [
-    "air-balloon.png",
-    "hiking.png",
-    "kayak.png",
-    "surfing.png",
-    "diving.png",
+    "hiking3.png",
+    "surfing3.png",
+    "kayaking3.png",
+    "camping3.png",
+    "snorkeling3.png",
     
     // "Colombo.jpg",
     // "Colombo.jpg",
@@ -71,8 +77,41 @@ class _TouristHomeState extends State<TouristHome> {
     "Jetwing Jaffna"
   ];
 
-  List names = ["Ballooning", "Hiking", "Kayaking","Surfing", "Snorkeling"];
-  List names1 = [Ballooning(), Hiking(), Kayaking(), Surfing(), Hiking()];
+  List names = ["Hiking", "Surfing", "Kayaking","Camping", "Snorkeling"];
+  // List names1 = [ Hiking(name, token),  Surfing(name, token),Kayaking(name, token), Ballooning(name, token), Hiking(name, token)];
+  List<dynamic> _Users= [];
+ getData() async { 
+      setState(() {
+         loading = true;  //make loading true to show progressindicator
+      });
+
+      String url = "https://gocore.herokuapp.com/user/$token";
+      //don't use "http://localhost/" use local IP or actual live URL
+
+      Response response = await dio.get(url); 
+      _Users = response.data; //get JSON decoded data from response
+       
+      // _allUsers= apidata;
+      if(response.statusCode == 200){
+          //fetch successful
+          // if(apidata["error"]){ //Check if there is error given on JSON
+          //     error = true; 
+          //     errmsg  = apidata["msg"]; //error message from JSON
+          // }
+      }else{ 
+          error = true;
+          errmsg = "Error while fetching data.";
+      }
+
+      loading = false;
+      setState(() {}); //refresh UI 
+  }
+
+  @override
+  void initState() {
+    getData(); //fetching data
+    super.initState();
+  }
 
   // late Response response;
   // Dio dio = Dio();
@@ -169,8 +208,9 @@ class _TouristHomeState extends State<TouristHome> {
                       width: 60,
                       height: 60,
                       decoration: BoxDecoration(
-                        image: const DecorationImage(
-                          image: AssetImage("images/dummy.png"),
+                        image:  DecorationImage(
+                          // image: NetworkImage(_Users[0]['image']),
+                          image: AssetImage("images/image.jpeg")
                         ),
                         borderRadius: BorderRadius.circular(60),
                         color: Colors.grey.withOpacity(0.5),
@@ -336,7 +376,7 @@ class _TouristHomeState extends State<TouristHome> {
                               Navigator.push(
                                 context,
                                 new MaterialPageRoute(
-                                    builder: (context) => names1[index])
+                                    builder: (context) => (index==0)?Hiking(name,token) :(index==1)?Surfing(name,token):(index==2)?Kayaking(name,token):(index==3)?Ballooning(name,token) :Hiking(name,token))
                                     );
                              },
                             ),
@@ -384,10 +424,10 @@ class _TouristHomeState extends State<TouristHome> {
                           children: [
                             GestureDetector(
                               onTap: () {
-                                Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) => BookingPlans(name,token)));
+                                // Navigator.push(
+                                    // context,
+                                    // MaterialPageRoute(
+                                      // builder: (context) => BookingPlans(name,token)));
                                 
                               },
                               child: Container(
@@ -448,7 +488,7 @@ class _TouristHomeState extends State<TouristHome> {
               Container(
                 margin: const EdgeInsets.only(left: 20),
                 child: const Text(
-                  "Stays",
+                  "Trending Stays",
                   // textAlign: TextAlign.start,
                   style: TextStyle(
                     fontWeight: FontWeight.bold,

@@ -1,26 +1,84 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/src/foundation/key.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:frontend/main_page.dart';
+import 'package:dio/dio.dart';
+import 'package:intl/intl.dart';
 
 class BookingPlans extends StatefulWidget {
-  String name, token;
-  BookingPlans(this.name, this.token);
+  String name, token,plan, guide;
+  BookingPlans(this.name, this.token, this.plan, this.guide);
   //const BookingPlans({Key? key}) : super(key: key);
 
   @override
   State<BookingPlans> createState() 
   {
-    return _BookingPlans(this.name,this.token);
+    return _BookingPlans(this.name,this.token, this.plan, this.guide);
   }
  
 }
 
 class _BookingPlans extends State<BookingPlans> {
-  String name, token;
-  _BookingPlans(this.name, this.token);
+  String name, token, plan, guide;
+  _BookingPlans(this.name, this.token, this.plan, this.guide);
+
+  late Response response;
+  Dio dio = Dio();
+  bool error = false; //for error status
+  bool loading = false; //for data featching status
+  String errmsg = ""; //to assing any error message from API/runtime
+  // var apidata; //for decoded JSON data
+
+  // Map< dynamic> _Tour = [];
+  List<dynamic> _plan= [];
+  List<dynamic> _guide= [];
   List<String> days = ['Day 01','Day 02','Day 03','Day 04','Day 05',];
+  
+    getData() async { 
+      setState(() {
+         loading = true;  //make loading true to show progressindicator
+      });
+ 
+      String url = "https://gocore.herokuapp.com/viewplan/$plan/$guide";
+      //don't use "http://localhost/" use local IP or actual live URL
+
+      Response response = await dio.get(url); 
+      Map<String, dynamic> map = response.data;
+      _plan = map["plan"];
+      _guide = map["guide"];
+       print(map);
+      print(_plan);
+      print(_plan[0]["img"]);
+      print(_guide);
+      // _Tour = response.data; //get JSON decoded data from response
+     
+      // _allUsers= apidata;
+      if(response.statusCode == 200){
+          //fetch successful
+          // if(apidata["error"]){ //Check if there is error given on JSON
+          //     error = true; 
+          //     errmsg  = apidata["msg"]; //error message from JSON
+          // }
+      }else{ 
+          error = true;
+          errmsg = "Error while fetching data.";
+      }
+
+      loading = false;
+      setState(() {}); //refresh UI v
+  }
+
+  @override
+  void initState() {
+    getData(); //fetching data
+    super.initState();
+  }
+
+  var formatter = NumberFormat('###,###,###');
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -35,20 +93,20 @@ class _BookingPlans extends State<BookingPlans> {
               child: Container(
                 width: double.maxFinite,
                 height: 260,
-                decoration: const BoxDecoration(
+                decoration: BoxDecoration(
                   image: DecorationImage(
-                    image: AssetImage("images/ella.jpg"),
+                    image:  AssetImage('images/' + _plan[0]['img']),
                     fit: BoxFit.cover,
                   ),
                 ),
                 child: Container(
                   margin: const EdgeInsets.only(left: 15, top: 170),
-                  child: const Text(
-                    "Hiking Over the Hill\n3 Days, 2 Nights",
+                  child:  Text(
+                   " ${_plan[0]['planName']} \n ${_plan[0]['duration']} Days" ,
                     style: TextStyle(
                       color: Colors.white,
-                      fontSize: 20,
-                      fontWeight: FontWeight.w500,
+                      fontSize: 23,
+                      fontWeight: FontWeight.w600,
                     ),
                   ),
                 ),
@@ -92,9 +150,10 @@ class _BookingPlans extends State<BookingPlans> {
                                   height: 65,
                                   decoration: BoxDecoration(
                                     borderRadius: BorderRadius.circular(10),
-                                    image: const DecorationImage(
+                                    image:  DecorationImage(
                                       image:
-                                          const AssetImage("images/dummy.png"),
+                                          // const AssetImage("images/dummy.png"),
+                                          NetworkImage(_guide[0]['image']),
                                     ),
                                     color: Colors.grey.withOpacity(0.2),
                                   ),
@@ -104,8 +163,8 @@ class _BookingPlans extends State<BookingPlans> {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
-                                    const Text(
-                                      "Denuka Perera",
+                                    Text(
+                                      _guide[0]['name'],
                                       style: TextStyle(
                                         fontWeight: FontWeight.bold,
                                         fontSize: 15,
@@ -120,7 +179,7 @@ class _BookingPlans extends State<BookingPlans> {
                                     ),
                                     const SizedBox(height: 2),
                                     Row(
-                                      children: const [
+                                      children:  [
                                         Icon(
                                           Icons.star,
                                           size: 18,
@@ -162,10 +221,10 @@ class _BookingPlans extends State<BookingPlans> {
                                 height: 40,
                                 child: Row(
                                   mainAxisAlignment: MainAxisAlignment.center,
-                                  children: const [
+                                  children: [
                                     Icon(Icons.money_rounded, size: 25),
                                     SizedBox(width: 5),
-                                    Text("LKR 90,000"),
+                                    Text('LKR ${formatter.format(_plan[0]['price'])}'),
                                   ],
                                 ),
                               ),
@@ -180,10 +239,10 @@ class _BookingPlans extends State<BookingPlans> {
                                 height: 40,
                                 child: Row(
                                   mainAxisAlignment: MainAxisAlignment.center,
-                                  children: const [
+                                  children: [
                                     Icon(Icons.people_outlined, size: 25),
                                     SizedBox(width: 5),
-                                    Text("3-6 Passengers"),
+                                    Text("${_plan[0]['max_travellers']} Passengers"),
                                   ],
                                 ),
                               ),
