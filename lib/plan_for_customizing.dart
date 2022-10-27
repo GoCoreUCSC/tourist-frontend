@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/src/foundation/key.dart';
 import 'package:flutter/src/widgets/framework.dart';
 
+import 'customizePage.dart';
+
 class ViewCustomizablePlans extends StatefulWidget {
   const ViewCustomizablePlans({Key? key}) : super(key: key);
 
@@ -233,7 +235,8 @@ class _ViewCustomizablePlans extends State<ViewCustomizablePlans> {
                                                       Icon(
                                                         Icons
                                                             .check_box_outlined,
-                                                        color: Color(0xFF1554F6),
+                                                        color:
+                                                            Color(0xFF1554F6),
                                                       ),
                                                       SizedBox(width: 5),
                                                       Text(
@@ -260,7 +263,8 @@ class _ViewCustomizablePlans extends State<ViewCustomizablePlans> {
                                                       Icon(
                                                         Icons
                                                             .check_box_outlined,
-                                                        color: Color(0xFF1554F6),
+                                                        color:
+                                                            Color(0xFF1554F6),
                                                       ),
                                                       SizedBox(width: 5),
                                                       Text(
@@ -361,7 +365,11 @@ class _ViewCustomizablePlans extends State<ViewCustomizablePlans> {
                         height: 40,
                         child: GestureDetector(
                           onTap: () {
-                            
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) =>
+                                        Customization()));
                           },
                           child: Container(
                             padding: const EdgeInsets.only(top: 10, bottom: 10),

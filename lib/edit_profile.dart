@@ -106,10 +106,11 @@ getData() async {
               textAlign: TextAlign.center,
               style: TextStyle(
                 fontSize: 15,
-                color: Colors.grey,
+                color: Colors.black,
               ),
             ),
             const SizedBox(height: 10),
+            
             Container(
               margin: const EdgeInsets.only(left: 20),
               child: Column(
@@ -119,37 +120,75 @@ getData() async {
                     "Name",
                     style: TextStyle(
                       fontSize: 15,
-                      color: Colors.grey,
+                      color: Colors.black,
                       fontWeight: FontWeight.w500,
                     ),
                   ),
                   const SizedBox(height: 10),
-                  Container(
-                    height: 50,
-                    width: double.maxFinite,
-                    margin: const EdgeInsets.only(right: 20),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(5),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.grey.withOpacity(0.3),
-                          offset: const Offset(0, 4),
-                          blurRadius: 8.0,
-                          spreadRadius: 4.0,
-                        ),
-                      ],
-                    ),
-                    child: Padding(
-                      padding: EdgeInsets.all(15.0),
-                      child: Text(
-                        name,
-                        style: TextStyle(
-                          fontSize: 15,
-                        ),
-                      ),
-                    ),
-                  ),
+                  TextFormField(
+                          controller: TextEditingController(text: name),
+                          obscureText: false,
+                          onChanged: (value){
+                            name= value;
+                          },
+                          validator: (value) {
+                            if (value!.isEmpty) {
+                              return 'Enter your Name';
+                            } else {
+                              return null;
+                            }
+                          },
+                          decoration: InputDecoration(
+                            errorStyle: TextStyle(
+                              fontSize: 14.0,
+                            ),
+                            hintText: 'Enter your name',
+                            enabledBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(8),
+                              borderSide: BorderSide(color: Color(0xff1554F6)),
+                             ),
+                             focusedBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(8),
+                              borderSide: BorderSide(color: Color(0xff1554F6)),
+                             ),
+                             errorBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(8),
+                              borderSide: BorderSide(color: Colors.red),
+                             ),
+                             focusedErrorBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(8),
+                              borderSide: BorderSide(color: Colors.red),
+                             ),
+                             
+                             ),
+                             
+              ),
+                  // Container(
+                  //   height: 50,
+                  //   width: double.maxFinite,
+                  //   margin: const EdgeInsets.only(right: 20),
+                  //   decoration: BoxDecoration(
+                  //     color: Colors.white,
+                  //     borderRadius: BorderRadius.circular(5),
+                  //     boxShadow: [
+                  //       BoxShadow(
+                  //         color: Colors.black.withOpacity(0.3),
+                  //         offset: const Offset(0, 4),
+                  //         blurRadius: 8.0,
+                  //         spreadRadius: 4.0,
+                  //       ),
+                  //     ],
+                  //   ),
+                  //   child: Padding(
+                  //     padding: EdgeInsets.all(15.0),
+                  //     child: Text(
+                  //       name,
+                  //       style: TextStyle(
+                  //         fontSize: 15,
+                  //       ),
+                  //     ),
+                  //   ),
+                  // ),
                 ],
               ),
             ),
@@ -163,37 +202,75 @@ getData() async {
                     "Email",
                     style: TextStyle(
                       fontSize: 15,
-                      color: Colors.grey,
+                      color: Colors.black,
                       fontWeight: FontWeight.w500,
                     ),
                   ),
                   const SizedBox(height: 10),
-                  Container(
-                    height: 50,
-                    width: double.maxFinite,
-                    margin: const EdgeInsets.only(right: 20),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(5),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.grey.withOpacity(0.3),
-                          offset: const Offset(0, 4),
-                          blurRadius: 8.0,
-                          spreadRadius: 4.0,
-                        ),
-                      ],
-                    ),
-                    child: Padding(
-                      padding: EdgeInsets.all(15.0),
-                      child: Text(
-                        token,
-                        style: TextStyle(
-                          fontSize: 15,
-                        ),
-                      ),
-                    ),
-                  ),
+                  TextFormField(
+                          controller: TextEditingController(text: token),
+                          obscureText: false,
+                          onChanged: (value){
+                            name= value;
+                          },
+                          validator: (value) {
+                            if (value!.isEmpty) {
+                              return 'Enter your Name';
+                            } else {
+                              return null;
+                            }
+                          },
+                          decoration: InputDecoration(
+                            errorStyle: TextStyle(
+                              fontSize: 14.0,
+                            ),
+                            hintText: 'Enter your name',
+                            enabledBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(8),
+                              borderSide: BorderSide(color: Color(0xff1554F6)),
+                             ),
+                             focusedBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(8),
+                              borderSide: BorderSide(color: Color(0xff1554F6)),
+                             ),
+                             errorBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(8),
+                              borderSide: BorderSide(color: Colors.red),
+                             ),
+                             focusedErrorBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(8),
+                              borderSide: BorderSide(color: Colors.red),
+                             ),
+                             
+                             ),
+                             
+              ),
+                  // Container(
+                  //   height: 50,
+                  //   width: double.maxFinite,
+                  //   margin: const EdgeInsets.only(right: 20),
+                  //   decoration: BoxDecoration(
+                  //     color: Colors.white,
+                  //     borderRadius: BorderRadius.circular(5),
+                  //     boxShadow: [
+                  //       BoxShadow(
+                  //         color: Colors.black.withOpacity(0.3),
+                  //         offset: const Offset(0, 4),
+                  //         blurRadius: 8.0,
+                  //         spreadRadius: 4.0,
+                  //       ),
+                  //     ],
+                  //   ),
+                  //   child: Padding(
+                  //     padding: EdgeInsets.all(15.0),
+                  //     child: Text(
+                  //       token,
+                  //       style: TextStyle(
+                  //         fontSize: 15,
+                  //       ),
+                  //     ),
+                  //   ),
+                  // ),
                 ],
               ),
             ),
@@ -207,37 +284,75 @@ getData() async {
                     "Contact Number",
                     style: TextStyle(
                       fontSize: 15,
-                      color: Colors.grey,
+                      color: Colors.black,
                       fontWeight: FontWeight.w500,
                     ),
                   ),
                   const SizedBox(height: 10),
-                  Container(
-                    height: 50,
-                    width: double.maxFinite,
-                    margin: const EdgeInsets.only(right: 20),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(5),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.grey.withOpacity(0.3),
-                          offset: const Offset(0, 4),
-                          blurRadius: 8.0,
-                          spreadRadius: 4.0,
-                        ),
-                      ],
-                    ),
-                    child: const Padding(
-                      padding: EdgeInsets.all(15.0),
-                      child: Text(
-                        "+94775157385",
-                        style: TextStyle(
-                          fontSize: 15,
-                        ),
-                      ),
-                    ),
-                  ),
+                  TextFormField(
+                          controller: TextEditingController(text: name),
+                          obscureText: false,
+                          onChanged: (value){
+                            name= value;
+                          },
+                          validator: (value) {
+                            if (value!.isEmpty) {
+                              return 'Enter your Name';
+                            } else {
+                              return null;
+                            }
+                          },
+                          decoration: InputDecoration(
+                            errorStyle: TextStyle(
+                              fontSize: 14.0,
+                            ),
+                            hintText: 'Enter your name',
+                            enabledBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(8),
+                              borderSide: BorderSide(color: Color(0xff1554F6)),
+                             ),
+                             focusedBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(8),
+                              borderSide: BorderSide(color: Color(0xff1554F6)),
+                             ),
+                             errorBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(8),
+                              borderSide: BorderSide(color: Colors.red),
+                             ),
+                             focusedErrorBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(8),
+                              borderSide: BorderSide(color: Colors.red),
+                             ),
+                             
+                             ),
+                             
+              ),
+                  // Container(
+                  //   height: 50,
+                  //   width: double.maxFinite,
+                  //   margin: const EdgeInsets.only(right: 20),
+                  //   decoration: BoxDecoration(
+                  //     color: Colors.white,
+                  //     borderRadius: BorderRadius.circular(5),
+                  //     boxShadow: [
+                  //       BoxShadow(
+                  //         color: Colors.black.withOpacity(0.3),
+                  //         offset: const Offset(0, 4),
+                  //         blurRadius: 8.0,
+                  //         spreadRadius: 4.0,
+                  //       ),
+                  //     ],
+                  //   ),
+                  //   child: const Padding(
+                  //     padding: EdgeInsets.all(15.0),
+                  //     child: Text(
+                  //       "+94775157385",
+                  //       style: TextStyle(
+                  //         fontSize: 15,
+                  //       ),
+                  //     ),
+                  //   ),
+                  // ),
                 ],
               ),
             ),
@@ -251,37 +366,75 @@ getData() async {
                     "Address",
                     style: TextStyle(
                       fontSize: 15,
-                      color: Colors.grey,
+                      color: Colors.black,
                       fontWeight: FontWeight.w500,
                     ),
                   ),
                   const SizedBox(height: 10),
-                  Container(
-                    height: 50,
-                    width: double.maxFinite,
-                    margin: const EdgeInsets.only(right: 20),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(5),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.grey.withOpacity(0.3),
-                          offset: const Offset(0, 4),
-                          blurRadius: 8.0,
-                          spreadRadius: 4.0,
-                        ),
-                      ],
-                    ),
-                    child: const Padding(
-                      padding: EdgeInsets.all(15.0),
-                      child: Text(
-                        "43/D/11,Yatiyanawatta Road,Hedigama,Piliyandala.",
-                        style: TextStyle(
-                          fontSize: 15,
-                        ),
-                      ),
-                    ),
-                  ),
+                  TextFormField(
+                          controller: TextEditingController(text: name),
+                          obscureText: false,
+                          onChanged: (value){
+                            name= value;
+                          },
+                          validator: (value) {
+                            if (value!.isEmpty) {
+                              return 'Enter your Name';
+                            } else {
+                              return null;
+                            }
+                          },
+                          decoration: InputDecoration(
+                            errorStyle: TextStyle(
+                              fontSize: 14.0,
+                            ),
+                            hintText: 'Enter your name',
+                            enabledBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(8),
+                              borderSide: BorderSide(color: Color(0xff1554F6)),
+                             ),
+                             focusedBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(8),
+                              borderSide: BorderSide(color: Color(0xff1554F6)),
+                             ),
+                             errorBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(8),
+                              borderSide: BorderSide(color: Colors.red),
+                             ),
+                             focusedErrorBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(8),
+                              borderSide: BorderSide(color: Colors.red),
+                             ),
+                             
+                             ),
+                             
+              ),
+                  // Container(
+                  //   height: 50,
+                  //   width: double.maxFinite,
+                  //   margin: const EdgeInsets.only(right: 20),
+                  //   decoration: BoxDecoration(
+                  //     color: Colors.white,
+                  //     borderRadius: BorderRadius.circular(5),
+                  //     boxShadow: [
+                  //       BoxShadow(
+                  //         color: Colors.black.withOpacity(0.3),
+                  //         offset: const Offset(0, 4),
+                  //         blurRadius: 8.0,
+                  //         spreadRadius: 4.0,
+                  //       ),
+                  //     ],
+                  //   ),
+                  //   child: const Padding(
+                  //     padding: EdgeInsets.all(15.0),
+                  //     child: Text(
+                  //       "43/D/11,Yatiyanawatta Road,Hedigama,Piliyandala.",
+                  //       style: TextStyle(
+                  //         fontSize: 15,
+                  //       ),
+                  //     ),
+                  //   ),
+                  // ),
                 ],
               ),
             ),
@@ -291,7 +444,7 @@ getData() async {
               width: 100,
               margin: const EdgeInsets.only(left: 100, right: 100),
               decoration: BoxDecoration(
-                color: Color(0xFF1702F7),
+                color: Color(0xFF1554F6),
                 borderRadius: BorderRadius.circular(10),
               ),
               child: GestureDetector(

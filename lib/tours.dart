@@ -2,10 +2,9 @@ import 'dart:collection';
 
 import 'package:flutter/material.dart';
 import 'package:dio/dio.dart';
-// import 'package:frontend/plan_for_customizing.dart';
+import 'package:frontend/plan_for_customizing.dart';
 import 'package:frontend/selectMoreDetails.dart';
-import 'package:frontend/tours_booking.dart';
-// import 'package:frontend/plan_for_booking.dart';
+import 'package:frontend/plan_for_booking.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 // import 'package:frontend/signup.dart';
